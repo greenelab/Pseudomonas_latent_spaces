@@ -11,8 +11,12 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 #-------------------------------------------------------------------------------------------------------------------------------
-# Visualize tybalt encoded data using tsne
+# By Alexandra Lee (July 2018) 
+#
+# Visualize Pseudomonas encoded gene expression data using t-SNE
+# Encoding performed using Tybalt (VAE) or eADAGE (DA)
 #-------------------------------------------------------------------------------------------------------------------------------
+import os
 from sklearn.manifold import TSNE
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -25,9 +29,9 @@ np.random.seed(123)
 
 
 # load arguments
-file_name = 'tybalt_2layer_encoded_10'
-encoded_data_file = 'C:/Users/alexj/Documents/UPenn/CGreene/Pseudomonas/models/'+file_name+'.tsv'
-map_file = 'C:/Users/alexj/Documents/UPenn/CGreene/Pseudomonas/metadata/mapping_sampleID_medium.txt'
+file_name = 'tybalt_2layer_encoded_10.tsv'
+encoded_data_file = os.path.join(os.path.dirname(os.getcwd()), "models", file_name)
+map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_sampleID_medium.txt")
 
 
 # In[4]:
@@ -64,10 +68,10 @@ tsne_X.index.name = 'sample_id'
 # meaning you can attach the index back afterward
 
 # read in mapping file (sample id --> phenotype)
-map = pd.read_table(map_file, header = 0, sep = '\t', index_col = 0)
+mapper = pd.read_table(map_file, header = 0, sep = '\t', index_col = 0)
 
 # Join 
-X_new = pd.merge(tsne_X, map, left_index=True, right_index=True)
+X_new = pd.merge(tsne_X, mapper, left_index=True, right_index=True)
 X_new.head(5)
 #X_new.shape
 
@@ -80,7 +84,7 @@ X_new.head(5)
 
 fg = sns.lmplot(x = '1', y = '2', data = X_new, hue = 'medium', fit_reg = False)
 fg.add_legend()
-fig_file = 'C:/Users/alexj/Documents/UPenn/CGreene/Pseudomonas/viz/'+file_name+'.png'
+fig_file = map_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "{}.png".format(file_name))
 fg.fig.suptitle(file_name.replace('_',' ').capitalize())
 fg.savefig(fig_file)
 

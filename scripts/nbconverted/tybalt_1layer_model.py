@@ -5,10 +5,11 @@
 
 
 # -----------------------------------------------------------------------------------------------------------------------
-# Run Tybalt on Pa dataset
+#-------------------------------------------------------------------------------------------------------------------------------
+# By Alexandra Lee (July 2018) 
 #
-# Alexandra Lee 
-# 21 June 2018
+# Encode Pseudomonas gene expression data into low dimensional latent space using 
+# Tybalt with single hidden layer
 # --------------------------------------------------------------------------------------------------------------------
 import os
 import argparse
@@ -32,7 +33,7 @@ np.random.seed(123)
 # --------------------------------------------------------------------------------------------------------------------
 # Files
 # --------------------------------------------------------------------------------------------------------------------
-data_file = 'C:/Users/alexj/Documents/UPenn/CGreene/Pseudomonas/data/all-pseudomonas-gene-normalized.pcl'
+data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.pcl")
 rnaseq = pd.read_table(data_file,sep='\t',index_col=0)
 rnaseq = rnaseq.transpose()
 
@@ -66,9 +67,9 @@ latent_dim = 10
 epsilon_std = 1.0
 beta = K.variable(0)
 
-stat_file = 'C:/Users/alexj/Documents/UPenn/CGreene/Pseudomonas/stats/tybalt_1layer'+str(latent_dim)+'_stats.csv'
-hist_plot_file ='C:/Users/alexj/Documents/UPenn/CGreene/Pseudomonas/stats/tybalt_1layer'+str(latent_dim)+'hist.png'
-encoded_file ='C:/Users/alexj/Documents/UPenn/CGreene/Pseudomonas/models/tybalt_1layer_encoded_'+str(latent_dim)+'.tsv'
+stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_stats.csv".format(latent_dim))
+hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_hist.png".format(latent_dim))
+encoded_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_encoded_{}.tsv".format(latent_dim))
 
 
 # In[4]:
