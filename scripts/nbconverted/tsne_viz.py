@@ -30,7 +30,7 @@ np.random.seed(123)
 
 # load arguments
 file_name = 'tybalt_2layer_encoded_10.tsv'
-encoded_data_file = os.path.join(os.path.dirname(os.getcwd()), "models", file_name)
+encoded_data_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", file_name)
 map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_sampleID_medium.txt")
 
 

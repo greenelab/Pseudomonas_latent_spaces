@@ -33,9 +33,8 @@ np.random.seed(123)
 # --------------------------------------------------------------------------------------------------------------------
 # Files
 # --------------------------------------------------------------------------------------------------------------------
-data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.pcl")
-rnaseq = pd.read_table(data_file,sep='\t',index_col=0)
-rnaseq = rnaseq.transpose()
+data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "train_A.txt")
+rnaseq = pd.read_table(data_file,sep='\t',index_col=0, header=0)
 
 
 # In[3]:
@@ -67,9 +66,13 @@ latent_dim = 10
 epsilon_std = 1.0
 beta = K.variable(0)
 
-stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_stats.csv".format(latent_dim))
-hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_hist.png".format(latent_dim))
-encoded_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_encoded_{}.tsv".format(latent_dim))
+stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_trainA_stats.csv".format(latent_dim))
+hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_trainA_hist.png".format(latent_dim))
+encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_{}_trainA_encoded.tsv".format(latent_dim))
+model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_trainA_encoder_model.json".format(latent_dim))
+weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_trainA_encoder_weights.h5".format(latent_dim))
+model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_trainA_decoder_model.json".format(latent_dim))
+weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_trainA_decoder_weights.h5".format(latent_dim))
 
 
 # In[4]:
@@ -143,7 +146,7 @@ class WarmUpCallback(Callback):
 # --------------------------------------------------------------------------------------------------------------------
 
 # Split 10% test set randomly
-test_set_percent = 0.1
+test_set_percent = 0.5
 rnaseq_test_df = rnaseq.sample(frac=test_set_percent)
 rnaseq_train_df = rnaseq.drop(rnaseq_test_df.index)
 
@@ -241,7 +244,9 @@ hist = vae.fit(np.array(rnaseq_train_df), shuffle=True, epochs=epochs, batch_siz
 
 # --------------------------------------------------------------------------------------------------------------------
 # Use trained model to make predictions
+# Separate encoder and decoder components of the model
 # --------------------------------------------------------------------------------------------------------------------
+# Model includes all layers in the computation of rnaseq_input GIVEN z_mean_encoded
 encoder = Model(rnaseq_input, z_mean_encoded)
 
 encoded_rnaseq_df = encoder.predict_on_batch(rnaseq)
@@ -265,7 +270,7 @@ fig = ax.get_figure()
 fig.savefig(hist_plot_file)
 
 
-# In[10]:
+# In[11]:
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -282,4 +287,28 @@ history_df.to_csv(stat_file, sep='\t')
 
 # Save latent space representation
 encoded_rnaseq_df.to_csv(encoded_file, sep='\t')
+
+# Save models
+# (source) https://machinelearningmastery.com/save-load-keras-deep-learning-models/
+
+# Save encoder model
+model_encoder_json = encoder.to_json()
+with open(model_encoder_file, "w") as json_file:
+    json_file.write(model_encoder_json)
+    
+# serialize weights to HDF5
+encoder.save_weights(weights_encoder_file)
+
+# Save decoder model
+# (source) https://github.com/greenelab/tybalt/blob/master/scripts/nbconverted/tybalt_vae.py
+decoder_input = Input(shape=(latent_dim, ))  # can generate from any sampled z vector
+_x_decoded_mean = decoder_to_reconstruct(decoder_input)
+decoder = Model(decoder_input, _x_decoded_mean)
+
+model_decoder_json = decoder.to_json()
+with open(model_decoder_file, "w") as json_file:
+    json_file.write(model_decoder_json)
+    
+# serialize weights to HDF5
+decoder.save_weights(weights_decoder_file)
 

@@ -101,6 +101,6 @@ fg.savefig(fig_file)
 
 
 # Output compressed data
-file_out = os.path.join(os.path.dirname(os.getcwd()), "models","{}_encoded.txt".format(method))
+file_out = os.path.join(os.path.dirname(os.getcwd()), "encoded","{}_encoded.txt".format(method))
 X_new.to_csv(file_out, sep='\t')
 
