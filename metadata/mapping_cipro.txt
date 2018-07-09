@@ -28,9 +28,6 @@ E-GEOD-4026	GSM92186.CEL	control
 E-GEOD-65882	GSM1608067_Biofilm+12hrcipro_rep1.CEL	treat
 E-GEOD-65882	GSM1608068_Biofilm+12hrcipro_rep2.CEL	treat
 E-GEOD-65882	GSM1608069_Biofilm+12hrcipro_rep3.CEL	treat
-E-GEOD-65870	GSM1608067_Biofilm+12hrcipro_rep1.CEL	treat
-E-GEOD-65870	GSM1608068_Biofilm+12hrcipro_rep2.CEL	treat
-E-GEOD-65870	GSM1608069_Biofilm+12hrcipro_rep3.CEL	treat
 E-GEOD-51409	GSM1244967_PAO1-22-replicate-01.CEL	treat
 E-GEOD-51409	GSM1244968_PAO1-22-replicate-02.CEL	treat
 E-GEOD-51409	GSM1244969_PAO1-22-replicate-03.CEL	treat
