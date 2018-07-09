@@ -33,8 +33,8 @@ np.random.seed(123)
 # --------------------------------------------------------------------------------------------------------------------
 # Files
 # --------------------------------------------------------------------------------------------------------------------
-data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "train_A.txt")
-rnaseq = pd.read_table(data_file,sep='\t',index_col=0, header=0)
+data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input.txt.xz")
+rnaseq = pd.read_table(data_file,sep='\t',index_col=0, header=0, compression='xz')
 
 
 # In[3]:
@@ -61,18 +61,19 @@ epochs = 100
 kappa = 0.01
 
 original_dim = rnaseq.shape[1]
-intermediate_dim = 100
 latent_dim = 10
 epsilon_std = 1.0
 beta = K.variable(0)
 
-stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_trainA_stats.csv".format(latent_dim))
-hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_trainA_hist.png".format(latent_dim))
-encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_{}_trainA_encoded.tsv".format(latent_dim))
-model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_trainA_encoder_model.json".format(latent_dim))
-weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_trainA_encoder_weights.h5".format(latent_dim))
-model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_trainA_decoder_model.json".format(latent_dim))
-weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_trainA_decoder_weights.h5".format(latent_dim))
+stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_train_stats.csv".format(latent_dim))
+hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_train_hist.png".format(latent_dim))
+
+encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_{}_train_encoded.txt".format(latent_dim))
+
+model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_encoder_model.json".format(latent_dim))
+weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_encoder_weights.h5".format(latent_dim))
+model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_decoder_model.json".format(latent_dim))
+weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_decoder_weights.h5".format(latent_dim))
 
 
 # In[4]:
@@ -146,7 +147,7 @@ class WarmUpCallback(Callback):
 # --------------------------------------------------------------------------------------------------------------------
 
 # Split 10% test set randomly
-test_set_percent = 0.5
+test_set_percent = 0.1
 rnaseq_test_df = rnaseq.sample(frac=test_set_percent)
 rnaseq_train_df = rnaseq.drop(rnaseq_test_df.index)
 
@@ -270,7 +271,7 @@ fig = ax.get_figure()
 fig.savefig(hist_plot_file)
 
 
-# In[11]:
+# In[10]:
 
 
 # --------------------------------------------------------------------------------------------------------------------

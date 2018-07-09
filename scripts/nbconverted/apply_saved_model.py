@@ -25,24 +25,20 @@ np.random.seed(123)
 
 
 # load arguments
-new_data_file = os.path.join(os.path.dirname(os.getcwd()), "estimated_geneExp", "estimated_test_B.txt")
-latent = True
+input_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_control.txt")
+model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_encoder_model.json")
+weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_encoder_weights.h5")
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "estimated_geneExp", "decoded_test_B.txt")
-model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_trainA_decoder_model.json")
-weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_trainA_decoder_weights.h5")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_10_train_control_encoded.txt")
 
 
 # In[3]:
 
 
 # read in data
-if latent:
-    new_data = pd.read_table(new_data_file, header = 0, sep = '\t', index_col = 0).transpose()
-else:
-    new_data = pd.read_table(new_data_file, header = 0, sep = '\t', index_col = 0)
-new_data.head(5)
+data = pd.read_table(input_file, header = 0, sep = '\t', index_col = 0)
+data
 
 
 # In[4]:
@@ -64,13 +60,13 @@ loaded_model.load_weights(weights_file)
 
 
 # Use trained model to encode new data into SAME latent space
-new_reconstructed = loaded_model.predict_on_batch(new_data)
-new_reconstructed_df = pd.DataFrame(new_reconstructed, index=new_data.index)
+reconstructed = loaded_model.predict_on_batch(data)
+reconstructed_df = pd.DataFrame(reconstructed, index=data.index)
 
 
 # In[6]:
 
 
 # Save latent space representation
-new_reconstructed_df.to_csv(out_file, sep='\t')
+reconstructed_df.to_csv(out_file, sep='\t')
 

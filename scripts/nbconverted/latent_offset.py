@@ -20,8 +20,8 @@ np.random.seed(123)
 
 
 # load arguments
-encodedA_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_10_trainA_encoded.tsv")
-encodedB_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "encoded_train_B.txt")
+encodedA_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_10_train_treat_encoded.txt")
+encodedB_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_10_train_control_encoded.txt")
 
 # output files
 out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_latent.txt")
@@ -54,6 +54,7 @@ train_B_mean = encodedB_data.mean(axis=0)
 # Generate offset using average gene expression in original dataset
 train_offset_latent = (train_A_mean - train_B_mean).sort_index(ascending=True)
 train_offset_latent = pd.DataFrame(train_offset_latent, index = train_offset_latent.index)
+train_offset_latent
 
 
 # In[6]:
