@@ -25,12 +25,15 @@ np.random.seed(123)
 
 
 # load arguments
-input_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_control.txt")
-model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_encoder_model.json")
-weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_encoder_weights.h5")
+input_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "estimated_test_control_encoded.txt")
+model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_decoder_model.json")
+weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_decoder_weights.h5")
+
+# If encoding
+encoding = True
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_10_train_control_encoded.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "estimated_test_control_latent.txt")
 
 
 # In[3]:
@@ -61,7 +64,13 @@ loaded_model.load_weights(weights_file)
 
 # Use trained model to encode new data into SAME latent space
 reconstructed = loaded_model.predict_on_batch(data)
-reconstructed_df = pd.DataFrame(reconstructed, index=data.index)
+
+if encoding:
+    reconstructed_df = pd.DataFrame(reconstructed, index=data.index)
+else:
+    reconstructed_df = pd.DataFrame(reconstructed) # Can we assume the index is preserved after decoding?
+
+reconstructed_df
 
 
 # In[6]:
