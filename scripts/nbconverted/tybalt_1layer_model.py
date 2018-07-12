@@ -33,9 +33,8 @@ np.random.seed(123)
 # --------------------------------------------------------------------------------------------------------------------
 # Files
 # --------------------------------------------------------------------------------------------------------------------
-data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.pcl")
-rnaseq = pd.read_table(data_file,sep='\t',index_col=0)
-rnaseq = rnaseq.transpose()
+data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input.txt.xz")
+rnaseq = pd.read_table(data_file,sep='\t',index_col=0, header=0, compression='xz')
 
 
 # In[3]:
@@ -62,14 +61,19 @@ epochs = 100
 kappa = 0.01
 
 original_dim = rnaseq.shape[1]
-intermediate_dim = 100
 latent_dim = 10
 epsilon_std = 1.0
 beta = K.variable(0)
 
-stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_stats.csv".format(latent_dim))
-hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_hist.png".format(latent_dim))
-encoded_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_encoded_{}.tsv".format(latent_dim))
+stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_train_stats.csv".format(latent_dim))
+hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1layer_{}_train_hist.png".format(latent_dim))
+
+encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_{}_train_encoded.txt".format(latent_dim))
+
+model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_encoder_model.h5".format(latent_dim))
+weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_encoder_weights.h5".format(latent_dim))
+model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_decoder_model.h5".format(latent_dim))
+weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_decoder_weights.h5".format(latent_dim))
 
 
 # In[4]:
@@ -241,7 +245,9 @@ hist = vae.fit(np.array(rnaseq_train_df), shuffle=True, epochs=epochs, batch_siz
 
 # --------------------------------------------------------------------------------------------------------------------
 # Use trained model to make predictions
+# Separate encoder and decoder components of the model
 # --------------------------------------------------------------------------------------------------------------------
+# Model includes all layers in the computation of rnaseq_input GIVEN z_mean_encoded
 encoder = Model(rnaseq_input, z_mean_encoded)
 
 encoded_rnaseq_df = encoder.predict_on_batch(rnaseq)
@@ -282,4 +288,24 @@ history_df.to_csv(stat_file, sep='\t')
 
 # Save latent space representation
 encoded_rnaseq_df.to_csv(encoded_file, sep='\t')
+
+# Save models
+# (source) https://machinelearningmastery.com/save-load-keras-deep-learning-models/
+
+# Save encoder model
+encoder.save(model_encoder_file)
+    
+# serialize weights to HDF5
+encoder.save_weights(weights_encoder_file)
+
+# Save decoder model
+# (source) https://github.com/greenelab/tybalt/blob/master/scripts/nbconverted/tybalt_vae.py
+decoder_input = Input(shape=(latent_dim, ))  # can generate from any sampled z vector
+_x_decoded_mean = decoder_to_reconstruct(decoder_input)
+decoder = Model(decoder_input, _x_decoded_mean)
+
+encoder.save(model_decoder_file)
+    
+# serialize weights to HDF5
+decoder.save_weights(weights_decoder_file)
 

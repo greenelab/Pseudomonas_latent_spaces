@@ -68,7 +68,7 @@ beta = K.variable(0)
 
 stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_2layer_{}_stats.csv".format(latent_dim))
 hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_2layer_{}_hist.png".format(latent_dim))
-encoded_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_encoded_{}.tsv".format(latent_dim))
+encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_encoded_{}.tsv".format(latent_dim))
 
 
 # In[4]:
