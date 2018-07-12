@@ -8,6 +8,12 @@
 # By Alexandra Lee (July 2018) 
 #
 # Apply offset vector
+#
+# In original space: Add offset vector to each sample in the test set condition A to transform the gene expression 
+# profile of the test samples to look like the samples are under condition B
+#
+# In latent space:  Add offset vector to each sample in the encoded test set condition A to transform the gene 
+# expression profile of the test samples to look like the samples are under condition B
 #-------------------------------------------------------------------------------------------------------------------------------
 import os
 import pandas as pd

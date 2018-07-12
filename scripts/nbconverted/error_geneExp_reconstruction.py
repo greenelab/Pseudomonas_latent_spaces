@@ -57,14 +57,8 @@ if latent:
 estimated_data_mean = estimated_data.mean(axis=0)
 obsv_data_mean = obsv_data.mean(axis=0)
 
-#estimated_data_mean_df = pd.DataFrame(estimated_data_mean, index = estimated_data_mean.index, columns=['estimated'])
-#obsv_data_mean_df = pd.DataFrame(obsv_data_mean, index = obsv_data_mean.index, columns = ['observed'])
-
-# Try using single sample
-estimated_data_mean_df = pd.DataFrame(estimated_data.iloc[0].transpose())
-obsv_data_mean_df = pd.DataFrame(obsv_data.iloc[0].transpose())
-estimated_data_mean_df.columns = ['estimated']
-obsv_data_mean_df.columns = ['observed']
+estimated_data_mean_df = pd.DataFrame(estimated_data_mean, index = estimated_data_mean.index, columns=['estimated'])
+obsv_data_mean_df = pd.DataFrame(obsv_data_mean, index = obsv_data_mean.index, columns = ['observed'])
 
 estimated_data_mean_df.head(5)
 #obsv_data_mean_df.head(5)
@@ -83,8 +77,6 @@ X.head(5)
 
 # Plot
 fg=sns.jointplot(x='estimated', y='observed', data=X, kind='reg');
-
-#fg = sns.lmplot(x = 'estimated', y = 'observed', data = X)
 fg.savefig(fig_file)
 
 

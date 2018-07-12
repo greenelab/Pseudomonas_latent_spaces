@@ -7,8 +7,13 @@
 #-------------------------------------------------------------------------------------------------------------------------------
 # By Alexandra Lee (July 2018) 
 #
-# Generate input datasets
+# Generate input files
+#
+# Dataset: Pseudomonas aeruginosa gene expression compendium referenced in https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5069748/
+# 
 # Use map_file to group samples into phenotype groups (condition A and B) based on experimental design annotations
+# Example: control vs treatment with antibiotics
+# 
 # Then group samples into training and test sets
 #
 # Generate offset vector using gene expression data in the original space (train_offset_original):
