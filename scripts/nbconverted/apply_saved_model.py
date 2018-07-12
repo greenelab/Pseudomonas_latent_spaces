@@ -16,7 +16,7 @@
 import os
 import pandas as pd
 import numpy as np
-from keras.models import model_from_json
+from keras.models import model_from_json, load_model
 from keras import metrics, optimizers
 np.random.seed(123)
 
@@ -25,15 +25,15 @@ np.random.seed(123)
 
 
 # load arguments
-input_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "estimated_test_control_encoded.txt")
-model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_decoder_model.json")
-weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_decoder_weights.h5")
+input_file = os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt")
+model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_encoder_model.h5")
+weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_encoder_weights.h5")
 
 # If encoding
 encoding = True
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "estimated_test_control_latent.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "estimated_test_control_encoded_v2.txt")
 
 
 # In[3]:
@@ -50,11 +50,12 @@ data
 # read in saved models
 
 # load json and create model
-json_file = open(model_file, 'r')
-loaded_model_json = json_file.read()
-json_file.close()
-loaded_model = model_from_json(loaded_model_json)
-                 
+#json_file = open(model_file, 'r')
+#loaded_model_json = json_file.read()
+#json_file.close()
+#loaded_model = model_from_json(loaded_model_json)
+   
+loaded_model = load_model(model_file)
 # load weights into new model
 loaded_model.load_weights(weights_file)
 

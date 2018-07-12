@@ -70,9 +70,9 @@ hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_1lay
 
 encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_{}_train_encoded.txt".format(latent_dim))
 
-model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_encoder_model.json".format(latent_dim))
+model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_encoder_model.h5".format(latent_dim))
 weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_encoder_weights.h5".format(latent_dim))
-model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_decoder_model.json".format(latent_dim))
+model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_decoder_model.h5".format(latent_dim))
 weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_{}_train_decoder_weights.h5".format(latent_dim))
 
 
@@ -293,9 +293,7 @@ encoded_rnaseq_df.to_csv(encoded_file, sep='\t')
 # (source) https://machinelearningmastery.com/save-load-keras-deep-learning-models/
 
 # Save encoder model
-model_encoder_json = encoder.to_json()
-with open(model_encoder_file, "w") as json_file:
-    json_file.write(model_encoder_json)
+encoder.save(model_encoder_file)
     
 # serialize weights to HDF5
 encoder.save_weights(weights_encoder_file)
@@ -306,9 +304,7 @@ decoder_input = Input(shape=(latent_dim, ))  # can generate from any sampled z v
 _x_decoded_mean = decoder_to_reconstruct(decoder_input)
 decoder = Model(decoder_input, _x_decoded_mean)
 
-model_decoder_json = decoder.to_json()
-with open(model_decoder_file, "w") as json_file:
-    json_file.write(model_decoder_json)
+encoder.save(model_decoder_file)
     
 # serialize weights to HDF5
 decoder.save_weights(weights_decoder_file)
