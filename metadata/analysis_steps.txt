@@ -1,10 +1,12 @@
 Steps to compare LSA and linear transformation of gene expression data:
 
 1.  Generate training/test datasets:  generate_input.py
-2.  Train VAE:  tybalt_1layer_model.py
+2.  Train VAE:  tybalt_1layer_model.py, tybalt_multilayer_model.py
 3.  Encode training datasets and save encodings:  apply_saved_model.py
 4.  Generate offset vector:  latent_offset.py
-5.  Encode test datasets:  apply_saved_model.py
+5.  Encode test control dataset:  apply_saved_model.py
 6.  Apply offset vector:  apply_offset.py
-7.  Decode test dataset (only for latent space):  apply_saved_model.py
+	Original space: Apply saved offset (generated from "generate_input.py") directly to original control dataset in data/
+	Latent space:  Apply saved offset (generated from "latent_offset.py") to encoded control dataset in encoded/
+7.  Decode encoded test dataset (only for latent space):  apply_saved_model.py
 8.  Evaluate transformation of test datasets:  error_geneExp_reconstruction.py
