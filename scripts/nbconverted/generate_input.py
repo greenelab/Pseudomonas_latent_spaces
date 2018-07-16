@@ -4,6 +4,12 @@
 # In[1]:
 
 
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+
+# In[2]:
+
+
 #-------------------------------------------------------------------------------------------------------------------------------
 # By Alexandra Lee (July 2018) 
 #
@@ -22,10 +28,13 @@
 import os
 import pandas as pd
 import numpy as np
+from scipy.stats import variation
+import seaborn as sns
+import matplotlib.pyplot as plt
 np.random.seed(123)
 
 
-# In[2]:
+# In[3]:
 
 
 # load arguments
@@ -34,7 +43,7 @@ data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-
 map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_cipro.txt")
 
 
-# In[3]:
+# In[4]:
 
 
 # read in data
@@ -43,7 +52,7 @@ X = data.transpose()
 X.head(5)
 
 
-# In[4]:
+# In[5]:
 
 
 # read in metadata file containing grouping of each sample into training/test and phenotypic group
@@ -51,7 +60,7 @@ grp = pd.read_table(map_file, header = 0, sep = '\t', index_col = None)
 grp
 
 
-# In[5]:
+# In[6]:
 
 
 # Group samples into condition A and B based on mapping file provided
@@ -81,7 +90,30 @@ train_treat = treat_all.drop(test_treat.index)
 #test_treat
 
 
-# In[6]:
+# In[13]:
+
+
+# Calculate Coefficient of Variance (CV) to determine variance between samples
+# CV is the standardized measure of dispersion from the mean
+treat_cv = variation(treat_all, axis = 0)
+treat_cv = pd.DataFrame(treat_cv, columns = ['cv_treat'])
+treat_cv.insert(0, 'gene_id', treat_all.columns)
+
+control_cv = variation(control_all, axis = 0)
+control_cv = pd.DataFrame(control_cv, columns = ['cv_control'])
+control_cv.insert(0, 'gene_id', control_all.columns)
+
+# Join 
+CV = pd.merge(treat_cv, control_cv, on = 'gene_id')
+CV = pd.melt(CV, id_vars = 'gene_id', var_name = 'group', value_name = 'cv' )
+CV.head(5)
+
+# figure
+fig = plt.figure()
+fg = sns.boxplot(x = 'group', y='cv', hue='group',  data=CV, palette="Set3")
+
+
+# In[8]:
 
 
 # Create input holding out test test
@@ -93,7 +125,7 @@ input_holdout.shape
 #X.shape
 
 
-# In[7]:
+# In[9]:
 
 
 # Average gene expression across samples in training set
@@ -104,16 +136,19 @@ train_treat_mean = train_treat.mean(axis=0)
 train_offset_original = train_treat_mean - train_control_mean
 
 
-# In[8]:
+# In[10]:
 
 
 # Output training and test sets
-train_control.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_control.txt"), sep='\t')
-train_treat.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_treat.txt"), sep='\t')
+fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "cv.png")
+fig.savefig(fig_file)
 
-test_control.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt"), sep='\t')
-test_treat.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "test_treat.txt"), sep='\t')
+#train_control.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_control.txt"), sep='\t')
+#train_treat.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_treat.txt"), sep='\t')
 
-train_offset_original.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_original.txt"), sep='\t')
-input_holdout.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input.txt.xz"), sep='\t', compression='xz')
+#test_control.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt"), sep='\t')
+#test_treat.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "test_treat.txt"), sep='\t')
+
+#train_offset_original.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_original.txt"), sep='\t')
+#input_holdout.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input.txt.xz"), sep='\t', compression='xz')
 

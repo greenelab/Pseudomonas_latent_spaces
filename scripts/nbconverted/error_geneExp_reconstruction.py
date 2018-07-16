@@ -26,14 +26,14 @@ np.random.seed(123)
 
 
 # load arguments
-estimated_file = os.path.join(os.path.dirname(os.getcwd()), "output", "estimated_test_control_latent.txt")
+estimated_file = os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt")
 obsv_file = os.path.join(os.path.dirname(os.getcwd()), "data", "test_treat.txt")
 
 # If using latent space estimation
 latent = True
 
 # output
-fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "estimated_sample0_latent.png")
+fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "test_control_noOffset.png")
 
 
 # In[4]:
@@ -76,7 +76,7 @@ X.head(5)
 
 
 # Plot
-fg=sns.jointplot(x='estimated', y='observed', data=X, kind='reg');
+fg=sns.jointplot(x='estimated', y='observed', data=X, kind='hex');
 fg.savefig(fig_file)
 
 

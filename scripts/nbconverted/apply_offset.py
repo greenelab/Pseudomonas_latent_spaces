@@ -25,14 +25,14 @@ np.random.seed(123)
 
 
 # load arguments
-test_file = os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt")
-offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_original.txt")
+test_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_test_control_encoded.txt")
+offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_latent_2layer.txt")
 
 # Are you applying the offset in the latent space?
-latent = False
+latent = True
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "estimated_test_control_original.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "estimated_test_control_encoded_2layer.txt")
 
 
 # In[3]:

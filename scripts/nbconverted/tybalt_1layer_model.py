@@ -304,7 +304,7 @@ decoder_input = Input(shape=(latent_dim, ))  # can generate from any sampled z v
 _x_decoded_mean = decoder_to_reconstruct(decoder_input)
 decoder = Model(decoder_input, _x_decoded_mean)
 
-encoder.save(model_decoder_file)
+decoder.save(model_decoder_file)
     
 # serialize weights to HDF5
 decoder.save_weights(weights_decoder_file)

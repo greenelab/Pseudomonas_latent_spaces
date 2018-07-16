@@ -20,11 +20,11 @@ np.random.seed(123)
 
 
 # load arguments
-encodedA_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_10_train_treat_encoded.txt")
-encodedB_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_1layer_10_train_control_encoded.txt")
+encodedA_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_train_treat_encoded.txt")
+encodedB_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_train_control_encoded.txt")
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_latent.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_latent_2layer.txt")
 
 
 # In[3]:

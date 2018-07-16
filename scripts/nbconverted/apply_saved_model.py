@@ -25,15 +25,15 @@ np.random.seed(123)
 
 
 # load arguments
-input_file = os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt")
-model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_encoder_model.h5")
-weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10_train_encoder_weights.h5")
+input_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_test_control_encoded.txt")
+model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_10_train_decoder_model.h5")
+weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_10_train_decoder_weights.h5")
 
 # If encoding
 encoding = True
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "estimated_test_control_encoded_v2.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "estimated_test_control_latent_2layer.txt")
 
 
 # In[3]:
