@@ -31,15 +31,17 @@ import numpy as np
 from scipy.stats import variation
 import seaborn as sns
 import matplotlib.pyplot as plt
-np.random.seed(123)
+
+randomState = 123
+from numpy.random import seed
+seed(randomState)
 
 
 # In[3]:
 
 
 # load arguments
-#data_file = '/home/alexandra/Documents/Pseudomonas_scratch/all-pseudomonas-gene-normalized.pcl'
-data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")  # repo file is zipped
+data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")
 map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_cipro.txt")
 
 
@@ -79,18 +81,18 @@ for index, row in grp.iterrows():
 
 # Split 10% test set randomly
 test_set_percent = 0.2
-test_control = control_all.sample(frac=test_set_percent)
+test_control = control_all.sample(frac=test_set_percent, random_state = randomState)
 train_control = control_all.drop(test_control.index)
 
-test_treat = treat_all.sample(frac=test_set_percent)
+test_treat = treat_all.sample(frac=test_set_percent, random_state = randomState)
 train_treat = treat_all.drop(test_treat.index)
 
 #control_all
-#train_treat
+train_treat
 #test_treat
 
 
-# In[13]:
+# In[7]:
 
 
 # Calculate Coefficient of Variance (CV) to determine variance between samples
@@ -134,14 +136,16 @@ train_treat_mean = train_treat.mean(axis=0)
 
 # Generate offset using average gene expression in original dataset
 train_offset_original = train_treat_mean - train_control_mean
+train_offset_original_df = pd.Series.to_frame(train_offset_original).transpose()
+train_offset_original_df
 
 
 # In[10]:
 
 
 # Output training and test sets
-fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "cv.png")
-fig.savefig(fig_file)
+#fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "cv.png")
+#fig.savefig(fig_file)
 
 #train_control.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_control.txt"), sep='\t')
 #train_treat.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_treat.txt"), sep='\t')
@@ -149,6 +153,6 @@ fig.savefig(fig_file)
 #test_control.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt"), sep='\t')
 #test_treat.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "test_treat.txt"), sep='\t')
 
-#train_offset_original.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_original.txt"), sep='\t')
+train_offset_original_df.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_original2.txt"), sep='\t')
 #input_holdout.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input.txt.xz"), sep='\t', compression='xz')
 

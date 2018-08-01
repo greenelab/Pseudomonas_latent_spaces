@@ -31,14 +31,16 @@ import numpy as np
 from scipy.stats import variation
 import seaborn as sns
 import matplotlib.pyplot as plt
-np.random.seed(123)
+
+randomState = 123
+from numpy.random import seed
+seed(randomState)
 
 
 # In[3]:
 
 
 # load arguments
-#data_file = '/home/alexandra/Documents/Pseudomonas_scratch/all-pseudomonas-gene-normalized.pcl'
 data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")  # repo file is zipped
 map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_anr.txt")
 

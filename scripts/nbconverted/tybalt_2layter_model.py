@@ -8,22 +8,63 @@
 # By Alexandra Lee (July 2018) 
 #
 # Encode Pseudomonas gene expression data into low dimensional latent space using 
-# Tybalt with multiple hidden layers
+# Tybalt with 2-hidden layers
 # --------------------------------------------------------------------------------------------------------------------
 import os
 import argparse
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
+# To ensure reproducibility using Keras during development
+# https://keras.io/getting-started/faq/#how-can-i-obtain-reproducible-results-using-keras-during-development
+import numpy as np
+import tensorflow as tf
+import random as rn
+
+# The below is necessary in Python 3.2.3 onwards to
+# have reproducible behavior for certain hash-based operations.
+# See these references for further details:
+# https://docs.python.org/3.4/using/cmdline.html#envvar-PYTHONHASHSEED
+# https://github.com/keras-team/keras/issues/2280#issuecomment-306959926
+randomState = 123
+import os
+os.environ['PYTHONHASHSEED'] = '0'
+
+# The below is necessary for starting Numpy generated random numbers
+# in a well-defined initial state.
+
+np.random.seed(42)
+
+# The below is necessary for starting core Python generated random numbers
+# in a well-defined state.
+
+rn.seed(12345)
+
+# Force TensorFlow to use single thread.
+# Multiple threads are a potential source of
+# non-reproducible results.
+# For further details, see: https://stackoverflow.com/questions/42022950/which-seeds-have-to-be-set-where-to-realize-100-reproducibility-of-training-res
+
+session_conf = tf.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1)
+
+from keras import backend as K
+
+# The below tf.set_random_seed() will make random number generation
+# in the TensorFlow backend have a well-defined initial state.
+# For further details, see: https://www.tensorflow.org/api_docs/python/tf/set_random_seed
+
+tf.set_random_seed(1234)
+
+sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
+K.set_session(sess)
+
+
 from keras.layers import Input, Dense, Lambda, Layer, Activation
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model, Sequential
-from keras import backend as K
 from keras import metrics, optimizers
 from keras.callbacks import Callback
-np.random.seed(123)
 
 
 # In[2]:
@@ -32,7 +73,7 @@ np.random.seed(123)
 # --------------------------------------------------------------------------------------------------------------------
 # Files
 # --------------------------------------------------------------------------------------------------------------------
-data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input.txt.xz")
+data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input_anr.txt.xz")
 rnaseq = pd.read_table(data_file,sep='\t',index_col=0, header=0, compression='xz')
 
 
@@ -65,15 +106,15 @@ latent_dim = 10
 epsilon_std = 1.0
 beta = K.variable(0)
 
-stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_2layer_{}_train_stats.csv".format(latent_dim))
-hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_2layer_{}_train_hist.png".format(latent_dim))
+stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_2layer_{}latent_stats.csv".format(latent_dim))
+hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_2layer_{}latent_hist.png".format(latent_dim))
 
-encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_{}_train_encoded.txt".format(latent_dim))
+encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "train_input_2layer_{}latent_encoded.txt".format(latent_dim))
 
-model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}_train_encoder_model.h5".format(latent_dim))
-weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}_train_encoder_weights.h5".format(latent_dim))
-model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}_train_decoder_model.h5".format(latent_dim))
-weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}_train_decoder_weights.h5".format(latent_dim))
+model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}latent_encoder_model.h5".format(latent_dim))
+weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}latent_encoder_weights.h5".format(latent_dim))
+model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}latent_decoder_model.h5".format(latent_dim))
+weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}latent_decoder_weights.h5".format(latent_dim))
 
 
 # In[4]:
@@ -148,7 +189,7 @@ class WarmUpCallback(Callback):
 
 # Split 10% test set randomly
 test_set_percent = 0.1
-rnaseq_test_df = rnaseq.sample(frac=test_set_percent)
+rnaseq_test_df = rnaseq.sample(frac=test_set_percent, random_state = randomState)
 rnaseq_train_df = rnaseq.drop(rnaseq_test_df.index)
 
 # Create a placeholder for an encoded (original-dimensional)

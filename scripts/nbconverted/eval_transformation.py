@@ -19,7 +19,10 @@ import os
 import pandas as pd
 import numpy as np
 import seaborn as sns
-np.random.seed(123)
+
+randomState = 123
+from numpy.random import seed
+seed(randomState)
 
 
 # In[3]:
@@ -33,7 +36,7 @@ obsv_file = os.path.join(os.path.dirname(os.getcwd()), "data", "test_treat.txt")
 latent = True
 
 # output
-fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "test_control_noOffset.png")
+fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "None.png")
 
 
 # In[4]:

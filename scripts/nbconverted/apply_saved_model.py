@@ -18,22 +18,22 @@ import pandas as pd
 import numpy as np
 from keras.models import model_from_json, load_model
 from keras import metrics, optimizers
-np.random.seed(123)
+
+randomState = 123
+from numpy.random import seed
+seed(randomState)
 
 
 # In[2]:
 
 
 # load arguments
-input_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_test_control_encoded.txt")
-model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_10_train_decoder_model.h5")
-weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_10_train_decoder_weights.h5")
-
-# If encoding
-encoding = True
+input_file = os.path.join(os.path.dirname(os.getcwd()), "data","test_control.txt")
+model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10latent_encoder_model5.h5")
+weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10latent_encoder_weights5.h5")
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "estimated_test_control_latent_2layer.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "test_control_1layer_10latent_encoded5.txt")
 
 
 # In[3]:
@@ -49,12 +49,6 @@ data
 
 # read in saved models
 
-# load json and create model
-#json_file = open(model_file, 'r')
-#loaded_model_json = json_file.read()
-#json_file.close()
-#loaded_model = model_from_json(loaded_model_json)
-   
 loaded_model = load_model(model_file)
 # load weights into new model
 loaded_model.load_weights(weights_file)
@@ -66,11 +60,7 @@ loaded_model.load_weights(weights_file)
 # Use trained model to encode new data into SAME latent space
 reconstructed = loaded_model.predict_on_batch(data)
 
-if encoding:
-    reconstructed_df = pd.DataFrame(reconstructed, index=data.index)
-else:
-    reconstructed_df = pd.DataFrame(reconstructed) # Can we assume the index is preserved after decoding?
-
+reconstructed_df = pd.DataFrame(reconstructed, index=data.index)
 reconstructed_df
 
 

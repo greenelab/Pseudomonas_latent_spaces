@@ -18,34 +18,39 @@
 import os
 import pandas as pd
 import numpy as np
-np.random.seed(123)
+
+randomState = 123
+from numpy.random import seed
+seed(randomState)
 
 
 # In[2]:
 
 
 # load arguments
-test_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_test_control_encoded.txt")
-offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_latent_2layer.txt")
+test_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_test_anr_t5_encoded.txt")
+offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_latent_2layer_anr.txt")
 
 # Are you applying the offset in the latent space?
 latent = True
 
+# Percentage of the offset to apply to the dataset
+percentage = 0.95
+
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "estimated_test_control_encoded_2layer.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "estimated_test_t90_encoded.txt")
 
 
 # In[3]:
 
 
 # read in data
-test_data = pd.read_table(test_file, header = 0, sep = '\t', index_col = 0).transpose()
+test_data = pd.read_table(test_file, header = 0, sep = '\t', index_col = 0)
 
 # save header to attach back later
-header = test_data.columns
+header = test_data.index
 
-test_data.head(5)
-#header
+test_data
 
 
 # In[4]:
@@ -56,7 +61,7 @@ if latent:
     offset_data = pd.read_table(offset_file, header = 0, sep = '\t', index_col = 0)
     offset_data.index = [str(i) for i in offset_data.index]  # match index between test_data and offset_data
 else:
-    offset_data = pd.read_table(offset_file, header = None, sep = '\t', index_col = 0)
+    offset_data = pd.read_table(offset_file, header = 0, sep = '\t', index_col = 0)
     
 #offset_data.index
 offset_data
@@ -65,25 +70,14 @@ offset_data
 # In[5]:
 
 
-# Rename header to match
-offset_data.columns = ['gene_exp']
-test_data.columns = ['gene_exp']*test_data.shape[1]
-
-test_data
-
-
-# In[6]:
-
-
 # Apply offset
-estimated_data = test_data.add(offset_data, axis = 'index')
-estimated_data.columns = header
-estimated_data = estimated_data.transpose()
+estimated_data = test_data.values + percentage*offset_data.values
+estimated_data = pd.DataFrame(estimated_data, index = test_data.index)
 
 estimated_data
 
 
-# In[7]:
+# In[6]:
 
 
 # Output estimated gene experession values
