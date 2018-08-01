@@ -28,14 +28,14 @@ seed(randomState)
 
 
 # load arguments
-test_file = os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt")
-offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_original.txt")
+test_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "test_control.txt")
+offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "train_offset_original.txt")
 
 # Are you applying the offset in the latent space?
-latent = True
+latent = False
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "estimated_test_control_original2.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "cipro_treatment", "estimated_test_control_original.txt")
 
 
 # In[3]:
@@ -59,7 +59,7 @@ if latent:
     offset_data = pd.read_table(offset_file, header = 0, sep = '\t', index_col = 0)
     offset_data.index = [str(i) for i in offset_data.index]  # match index between test_data and offset_data
 else:
-    offset_data = pd.read_table(offset_file, header = None, sep = '\t', index_col = 0)
+    offset_data = pd.read_table(offset_file, header = 0, sep = '\t', index_col = 0)
 
 #offset_data.index
 offset_data

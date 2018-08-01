@@ -28,12 +28,12 @@ seed(randomState)
 
 
 # load arguments
-input_file = os.path.join(os.path.dirname(os.getcwd()), "data","test_control.txt")
-model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10latent_encoder_model5.h5")
-weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_1layer_10latent_encoder_weights5.h5")
+input_file = os.path.join(os.path.dirname(os.getcwd()), "encoded","cipro_treatment", "estimated_test_control_2layer_10latent_encoded.txt")
+model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "cipro_treatment", "tybalt_2layer_10latent_decoder_model.h5")
+weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "cipro_treatment", "tybalt_2layer_10latent_decoder_weights.h5")
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "test_control_1layer_10latent_encoded5.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "cipro_treatment", "estimated_test_control_2layer_10latent.txt")
 
 
 # In[3]:

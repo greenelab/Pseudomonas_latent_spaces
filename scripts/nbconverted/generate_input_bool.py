@@ -44,6 +44,15 @@ seed(randomState)
 data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")
 map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_cipro.txt")
 
+# output files
+fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "cipro_treatment", "cv.png")
+train_control_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "train_control.txt")
+train_treat_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "train_treat.txt")
+test_control_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment","test_control.txt")
+test_treat_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "test_treat.txt")
+train_input_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "train_model_input.txt.xz")
+original_offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "train_offset_original.txt")
+
 
 # In[4]:
 
@@ -113,6 +122,7 @@ CV.head(5)
 # figure
 fig = plt.figure()
 fg = sns.boxplot(x = 'group', y='cv', hue='group',  data=CV, palette="Set3")
+fig.savefig(fig_file)
 
 
 # In[8]:
@@ -143,16 +153,14 @@ train_offset_original_df
 # In[10]:
 
 
-# Output training and test sets
-#fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "cv.png")
-#fig.savefig(fig_file)
+# Output
+train_control.to_csv(train_control_file, sep='\t')
+train_treat.to_csv(train_treat_file, sep='\t')
 
-#train_control.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_control.txt"), sep='\t')
-#train_treat.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_treat.txt"), sep='\t')
+test_control.to_csv(test_control_file, sep='\t')
+test_treat.to_csv(test_treat_file, sep='\t')
 
-#test_control.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt"), sep='\t')
-#test_treat.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "test_treat.txt"), sep='\t')
+train_offset_original_df.to_csv(original_offset_file, sep='\t')
 
-train_offset_original_df.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_original2.txt"), sep='\t')
-#input_holdout.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input.txt.xz"), sep='\t', compression='xz')
+input_holdout.to_csv(train_input_file, sep='\t', compression='xz')
 

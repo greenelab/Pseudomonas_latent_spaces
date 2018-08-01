@@ -29,14 +29,11 @@ seed(randomState)
 
 
 # load arguments
-estimated_file = os.path.join(os.path.dirname(os.getcwd()), "data", "test_control.txt")
-obsv_file = os.path.join(os.path.dirname(os.getcwd()), "data", "test_treat.txt")
-
-# If using latent space estimation
-latent = True
+estimated_file = os.path.join(os.path.dirname(os.getcwd()), "output", "cipro_treatment", "estimated_test_control_2layer_10latent.txt")
+obsv_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "test_treat.txt")
 
 # output
-fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "None.png")
+fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "cipro_treatment", "Tybalt_2layer_10latent_transform.png")
 
 
 # In[4]:
@@ -46,11 +43,10 @@ fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "None.png")
 estimated_data = pd.read_table(estimated_file, header = 0, sep = '\t', index_col = 0)
 obsv_data = pd.read_table(obsv_file, header = 0, sep = '\t', index_col = 0)
 
-if latent:
-    estimated_data.columns = obsv_data.columns
+estimated_data.columns = obsv_data.columns  #Add gene ids to merge on later
 
-#obsv_data.head(5)
-#estimated_data.head(5)
+#obsv_data
+estimated_data
 
 
 # In[5]:

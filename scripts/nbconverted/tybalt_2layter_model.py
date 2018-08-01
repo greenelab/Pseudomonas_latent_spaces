@@ -73,7 +73,7 @@ from keras.callbacks import Callback
 # --------------------------------------------------------------------------------------------------------------------
 # Files
 # --------------------------------------------------------------------------------------------------------------------
-data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input_anr.txt.xz")
+data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "train_model_input.txt.xz")
 rnaseq = pd.read_table(data_file,sep='\t',index_col=0, header=0, compression='xz')
 
 
@@ -106,15 +106,15 @@ latent_dim = 10
 epsilon_std = 1.0
 beta = K.variable(0)
 
-stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_2layer_{}latent_stats.csv".format(latent_dim))
-hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "tybalt_2layer_{}latent_hist.png".format(latent_dim))
+stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "cipro_treatment", "tybalt_2layer_{}latent_stats.csv".format(latent_dim))
+hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "cipro_treatment", "tybalt_2layer_{}latent_hist.png".format(latent_dim))
 
-encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "train_input_2layer_{}latent_encoded.txt".format(latent_dim))
+encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "cipro_treatment", "train_input_2layer_{}latent_encoded.txt".format(latent_dim))
 
-model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}latent_encoder_model.h5".format(latent_dim))
-weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}latent_encoder_weights.h5".format(latent_dim))
-model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}latent_decoder_model.h5".format(latent_dim))
-weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "tybalt_2layer_{}latent_decoder_weights.h5".format(latent_dim))
+model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "cipro_treatment", "tybalt_2layer_{}latent_encoder_model.h5".format(latent_dim))
+weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "cipro_treatment", "tybalt_2layer_{}latent_encoder_weights.h5".format(latent_dim))
+model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "cipro_treatment", "tybalt_2layer_{}latent_decoder_model.h5".format(latent_dim))
+weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "cipro_treatment", "tybalt_2layer_{}latent_decoder_weights.h5".format(latent_dim))
 
 
 # In[4]:
