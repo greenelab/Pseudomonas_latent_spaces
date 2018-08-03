@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[2]:
+# In[1]:
 
 
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -16,18 +16,18 @@ import numpy as np
 np.random.seed(123)
 
 
-# In[3]:
+# In[2]:
 
 
 # load arguments
-max_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_train_anr_maxO2_encoded.txt")
-min_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_train_anr_minO2_encoded.txt")
+max_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "train_maxO2_2layer_10latent_encoded.txt")
+min_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "train_minO2_2layer_10latent_encoded.txt")
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_latent_2layer_anr.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_offset_2layer_10latent.txt")
 
 
-# In[4]:
+# In[3]:
 
 
 # read in data
@@ -37,13 +37,13 @@ min_data = pd.read_table(min_file, header = 0, sep = '\t', index_col = 0)
 min_data
 
 
-# In[5]:
+# In[4]:
 
 
 max_data
 
 
-# In[7]:
+# In[5]:
 
 
 # Generate offset using average gene expression in original dataset

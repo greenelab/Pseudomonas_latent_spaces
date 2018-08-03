@@ -29,11 +29,11 @@ seed(randomState)
 
 
 # load arguments
-estimated_file = os.path.join(os.path.dirname(os.getcwd()), "output", "cipro_treatment", "estimated_test_control_2layer_10latent.txt")
-obsv_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment", "test_treat.txt")
+estimated_file = os.path.join(os.path.dirname(os.getcwd()), "output", "oxygen_level", "estimated_test_t90_2layer_10latent.txt")
+obsv_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_minO2.txt")
 
 # output
-fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "cipro_treatment", "Tybalt_2layer_10latent_transform.png")
+fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "oxygen_level", "Tybalt_2layer_transform_t90.png")
 
 
 # In[4]:

@@ -28,17 +28,14 @@ seed(randomState)
 
 
 # load arguments
-test_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "tybalt_2layer_10_test_anr_t5_encoded.txt")
-offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_latent_2layer_anr.txt")
-
-# Are you applying the offset in the latent space?
-latent = True
+test_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "test_t5_2layer_10latent_encoded.txt")
+offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_offset_2layer_10latent.txt")
 
 # Percentage of the offset to apply to the dataset
 percentage = 0.95
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "estimated_test_t90_encoded.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "estimated_test_t90_2layer_10latent_encoded.txt")
 
 
 # In[3]:
@@ -47,9 +44,6 @@ out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "estimated_test
 # read in data
 test_data = pd.read_table(test_file, header = 0, sep = '\t', index_col = 0)
 
-# save header to attach back later
-header = test_data.index
-
 test_data
 
 
@@ -57,13 +51,8 @@ test_data
 
 
 # read offset
-if latent:
-    offset_data = pd.read_table(offset_file, header = 0, sep = '\t', index_col = 0)
-    offset_data.index = [str(i) for i in offset_data.index]  # match index between test_data and offset_data
-else:
-    offset_data = pd.read_table(offset_file, header = 0, sep = '\t', index_col = 0)
+offset_data = pd.read_table(offset_file, header = 0, sep = '\t', index_col = 0)
     
-#offset_data.index
 offset_data
 
 

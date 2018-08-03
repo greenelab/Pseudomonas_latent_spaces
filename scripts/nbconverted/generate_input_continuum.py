@@ -42,7 +42,13 @@ seed(randomState)
 
 # load arguments
 data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")  # repo file is zipped
-map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_anr.txt")
+map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_oxy.txt")
+
+# output
+train_max_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_maxO2.txt")
+train_min_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_minO2.txt")
+train_input_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_model_input.txt.xz")
+original_offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_offset_original.txt")
 
 
 # In[4]:
@@ -115,17 +121,17 @@ train_offset_original
 # Output training and test sets
 
 # training data
-maxO2.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_maxO2.txt"), sep='\t')
-minO2.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_minO2.txt"), sep='\t')
-#input_holdout.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_model_input_anr.txt.xz"), sep='\t', compression='xz')
+maxO2.to_csv(train_max_file, sep='\t')
+minO2.to_csv(train_min_file, sep='\t')
+input_holdout.to_csv(train_input_file, sep='\t', compression='xz')
 
 # test data
 for index, row in grp.iterrows():
     if row['Group'] == 'Test':
         sample = str(row['Sample ID'])
         df = pd.DataFrame(intermediate.loc[sample]).transpose()
-        df.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "test_"+row['Phenotype']+".txt"), sep='\t')
+        df.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "test_"+row['Phenotype']+".txt"), sep='\t')
 
 # original offset
-train_offset_original.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "train_offset_original_anr.txt"), sep='\t')
+train_offset_original.to_csv(original_offset_file, sep='\t')
 
