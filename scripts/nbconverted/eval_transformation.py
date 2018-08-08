@@ -13,7 +13,7 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 #-------------------------------------------------------------------------------------------------------------------------------
 # By Alexandra Lee (July 2018) 
 #
-# Calculate error between reconstructed vs observed gene expression
+# Plot correlation between reconstructed vs observed gene expression
 #-------------------------------------------------------------------------------------------------------------------------------
 import os
 import pandas as pd
