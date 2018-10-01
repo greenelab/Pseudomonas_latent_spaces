@@ -73,7 +73,7 @@ from keras.callbacks import Callback
 # --------------------------------------------------------------------------------------------------------------------
 # Files
 # --------------------------------------------------------------------------------------------------------------------
-data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_model_input.txt.xz")
+data_file =  os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673_full_old", "train_model_input.txt.xz")
 rnaseq = pd.read_table(data_file,sep='\t',index_col=0, header=0, compression='xz')
 
 
@@ -97,7 +97,7 @@ rnaseq = pd.read_table(data_file,sep='\t',index_col=0, header=0, compression='xz
 
 learning_rate = 0.001
 batch_size = 100
-epochs = 500
+epochs = 200
 kappa = 0.01
 
 original_dim = rnaseq.shape[1]
@@ -106,15 +106,15 @@ latent_dim = 10
 epsilon_std = 1.0
 beta = K.variable(0)
 
-stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "oxygen_level", "tybalt_2layer_{}latent_stats.csv".format(latent_dim))
-hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "oxygen_level", "tybalt_2layer_{}latent_hist.png".format(latent_dim))
+stat_file =  os.path.join(os.path.dirname(os.getcwd()), "stats", "PA1673_full_old", "tybalt_2layer_{}latent_stats.csv".format(latent_dim))
+hist_plot_file =os.path.join(os.path.dirname(os.getcwd()), "stats", "PA1673_full_old", "tybalt_2layer_{}latent_hist.png".format(latent_dim))
 
-encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "train_input_2layer_{}latent_encoded.txt".format(latent_dim))
+encoded_file =os.path.join(os.path.dirname(os.getcwd()), "encoded", "PA1673_full_old", "train_input_2layer_{}latent_encoded.txt".format(latent_dim))
 
-model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "oxygen_level", "tybalt_2layer_{}latent_encoder_model.h5".format(latent_dim))
-weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "oxygen_level", "tybalt_2layer_{}latent_encoder_weights.h5".format(latent_dim))
-model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "oxygen_level", "tybalt_2layer_{}latent_decoder_model.h5".format(latent_dim))
-weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "oxygen_level", "tybalt_2layer_{}latent_decoder_weights.h5".format(latent_dim))
+model_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "PA1673_full_old", "tybalt_2layer_{}latent_encoder_model.h5".format(latent_dim))
+weights_encoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "PA1673_full_old", "tybalt_2layer_{}latent_encoder_weights.h5".format(latent_dim))
+model_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "PA1673_full_old", "tybalt_2layer_{}latent_decoder_model.h5".format(latent_dim))
+weights_decoder_file =os.path.join(os.path.dirname(os.getcwd()), "models", "PA1673_full_old", "tybalt_2layer_{}latent_decoder_weights.h5".format(latent_dim))
 
 
 # In[4]:

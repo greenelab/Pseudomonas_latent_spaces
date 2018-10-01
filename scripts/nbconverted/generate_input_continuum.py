@@ -42,13 +42,13 @@ seed(randomState)
 
 # load arguments
 data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")  # repo file is zipped
-map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_oxy.txt")
+map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_PA1673.txt")
 
 # output
-train_max_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_maxO2.txt")
-train_min_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_minO2.txt")
-train_input_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_model_input.txt.xz")
-original_offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_offset_original.txt")
+train_max_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673", "train_minExp.txt")
+train_min_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673", "train_maxExp.txt")
+train_input_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673", "train_model_input.txt.xz")
+original_offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673", "train_offset_original.txt")
 
 
 # In[4]:
@@ -81,7 +81,7 @@ intermediate = pd.DataFrame()
 
 for index, row in grp.iterrows():
     if row['Group'] == 'Train':
-        if row['Phenotype'] == "maxO2":
+        if row['Phenotype'] == "minExp":
             sample = str(row['Sample ID'])
             maxO2 = maxO2.append(X[X.index.str.contains(sample, regex=False)])
         else:
@@ -130,7 +130,7 @@ for index, row in grp.iterrows():
     if row['Group'] == 'Test':
         sample = str(row['Sample ID'])
         df = pd.DataFrame(intermediate.loc[sample]).transpose()
-        df.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "test_"+row['Phenotype']+".txt"), sep='\t')
+        df.to_csv(os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673", "test_"+row['Phenotype']+".txt"), sep='\t')
 
 # original offset
 train_offset_original.to_csv(original_offset_file, sep='\t')

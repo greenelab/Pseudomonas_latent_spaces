@@ -28,12 +28,12 @@ seed(randomState)
 
 
 # load arguments
-input_file = os.path.join(os.path.dirname(os.getcwd()), "encoded","oxygen_level", "estimated_test_t90_2layer_10latent_encoded.txt")
-model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "oxygen_level", "tybalt_2layer_10latent_decoder_model.h5")
-weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "oxygen_level", "tybalt_2layer_10latent_decoder_weights.h5")
+input_file = os.path.join(os.path.dirname(os.getcwd()), "encoded","PA1673_full_old", "estimated_test_mid2_2layer_10latent_encoded.txt")
+model_file = os.path.join(os.path.dirname(os.getcwd()), "models", "PA1673_full_old", "tybalt_2layer_10latent_decoder_model.h5")
+weights_file = os.path.join(os.path.dirname(os.getcwd()), "models", "PA1673_full_old", "tybalt_2layer_10latent_decoder_weights.h5")
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "oxygen_level", "esimated_test_t90_2layer_10latent.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "PA1673_full_old", "estimated_test_mid2_2layer_10latent.txt")
 
 
 # In[3]:

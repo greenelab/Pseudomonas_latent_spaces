@@ -20,11 +20,11 @@ np.random.seed(123)
 
 
 # load arguments
-max_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "train_maxO2_2layer_10latent_encoded.txt")
-min_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "train_minO2_2layer_10latent_encoded.txt")
+max_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "PA1673", "train_minExp_2layer_10latent_encoded.txt")
+min_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "PA1673", "train_maxExp_2layer_10latent_encoded.txt")
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_offset_2layer_10latent.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673", "train_offset_2layer_10latent.txt")
 
 
 # In[3]:
