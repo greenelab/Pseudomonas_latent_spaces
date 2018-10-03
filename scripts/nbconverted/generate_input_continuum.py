@@ -64,7 +64,7 @@ X.head(5)
 
 
 # read in metadata file containing grouping of each sample into training/test and phenotypic group
-grp = pd.read_table(map_file, header = 0, sep = '\t', index_col = None)
+grp = pd.read_table(map_file, header=0, sep='\t', index_col=None)
 grp
 
 

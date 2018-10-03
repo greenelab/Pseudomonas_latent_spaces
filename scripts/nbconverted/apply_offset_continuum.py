@@ -42,7 +42,7 @@ out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "PA1673_full_ol
 
 
 # read in data
-test_data = pd.read_table(test_file, header = 0, sep = '\t', index_col = 0)
+test_data = pd.read_table(test_file, header=0, sep='\t', index_col=0)
 
 test_data
 
@@ -51,7 +51,7 @@ test_data
 
 
 # read offset
-offset_data = pd.read_table(offset_file, header = 0, sep = '\t', index_col = 0)
+offset_data = pd.read_table(offset_file, header=0, sep='\t', index_col=0)
 #offset_data = pd.read_table(offset_file, header=None, sep = '\t', index_col = 0).T #original
     
 offset_data

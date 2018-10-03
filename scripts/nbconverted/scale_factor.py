@@ -27,8 +27,8 @@ new_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673_full_old",
 
 
 # read in data
-baseline_data = pd.read_table(baseline_file, header = 0, sep = '\t', index_col = 0)
-new_data = pd.read_table(new_file, header = 0, sep = '\t', index_col = 0)
+baseline_data = pd.read_table(baseline_file, header=0, sep='\t', index_col=0)
+new_data = pd.read_table(new_file, header=0, sep='\t', index_col=0)
 
 
 # In[4]:

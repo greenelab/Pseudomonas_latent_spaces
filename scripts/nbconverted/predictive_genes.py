@@ -14,6 +14,11 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 # By Alexandra Lee (July 2018) 
 #
 # Identify genes that are predictive using latent transformation vs linear transformation
+# 
+# To determine which genes are "predictive" we compare the gene expression predicted after performing a
+# transformation in gene space with the actual gene expression.  If the correlation between the two measurements
+# is high then this gene is considered "predictive" using the gene space model.  The same argument is made
+# for using the latent space model
 #-------------------------------------------------------------------------------------------------------------------------------
 import os
 import pandas as pd
@@ -178,8 +183,12 @@ print("Number of genes that are predictive in original space is {}".format(len(o
 #print("Number of target genes is {}".format(len(target_geneID)))
 
 # output list of genes to file
-pd.DataFrame(both_geneID).to_csv(both_geneID_file, sep='\t')
-pd.DataFrame(none_geneID).to_csv(none_geneID_file, sep='\t')
-pd.DataFrame(latent_geneID).to_csv(latent_geneID_file, sep='\t')
-pd.DataFrame(original_geneID).to_csv(original_geneID_file, sep='\t')
+if len(both_geneID) > 0:
+    pd.DataFrame(both_geneID).to_csv(both_geneID_file, sep='\t')
+if len(none_geneID) > 0:
+    pd.DataFrame(none_geneID).to_csv(none_geneID_file, sep='\t')
+if len(latent_geneID) > 0:
+    pd.DataFrame(latent_geneID).to_csv(latent_geneID_file, sep='\t')
+if len(original_geneID) > 0:
+    pd.DataFrame(original_geneID).to_csv(original_geneID_file, sep='\t')
 

@@ -62,7 +62,7 @@ original_offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA167
 
 
 # Read in data
-data = pd.read_table(data_file, header = 0, sep = '\t', index_col = 0, compression='zip')
+data = pd.read_table(data_file, header=0, sep='\t', index_col=0, compression='zip')
 X = data.transpose()
 X.shape
 
@@ -70,7 +70,7 @@ X.shape
 # In[7]:
 
 
-# Plot distirubtion of gene_id gene expression 
+# Plot distribution of gene_id gene expression 
 sns.distplot(X[gene_id])
 
 
@@ -137,10 +137,10 @@ print(mid_2.shape)
 
 # Split 20% test set randomly
 test_set_percent = 0.2
-test_lowest = lowest.sample(frac=test_set_percent, random_state = randomState)
-test_highest = highest.sample(frac=test_set_percent, random_state = randomState)
-test_mid1 = mid_1.sample(frac=test_set_percent, random_state = randomState)
-test_mid2 = mid_2.sample(frac=test_set_percent, random_state = randomState)
+test_lowest = lowest.sample(frac=test_set_percent, random_state=randomState)
+test_highest = highest.sample(frac=test_set_percent, random_state=randomState)
+test_mid1 = mid_1.sample(frac=test_set_percent, random_state=randomState)
+test_mid2 = mid_2.sample(frac=test_set_percent, random_state=randomState)
 
 # Training sets
 train_lowest = lowest.drop(test_lowest.index)

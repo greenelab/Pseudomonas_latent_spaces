@@ -40,7 +40,7 @@ out_file = os.path.join(os.path.dirname(os.getcwd()), "output", "PA1673_full_old
 
 
 # read in data
-data = pd.read_table(input_file, header = 0, sep = '\t', index_col = 0)
+data = pd.read_table(input_file, header=0, sep='\t', index_col=0)
 data
 
 

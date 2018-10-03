@@ -40,8 +40,8 @@ fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "PA1673_full_old", 
 
 
 # read in data
-estimated_data = pd.read_table(estimated_file, header = 0, sep = '\t', index_col = 0)
-obsv_data = pd.read_table(obsv_file, header = 0, sep = '\t', index_col = 0)
+estimated_data = pd.read_table(estimated_file, header=0, sep='\t', index_col=0)
+obsv_data = pd.read_table(obsv_file, header=0, sep='\t', index_col=0)
 
 estimated_data.columns = obsv_data.columns  #Add gene ids to merge on later
 
@@ -56,8 +56,8 @@ estimated_data
 estimated_data_mean = estimated_data.mean(axis=0)
 obsv_data_mean = obsv_data.mean(axis=0)
 
-estimated_data_mean_df = pd.DataFrame(estimated_data_mean, index = estimated_data_mean.index, columns=['estimated'])
-obsv_data_mean_df = pd.DataFrame(obsv_data_mean, index = obsv_data_mean.index, columns = ['observed'])
+estimated_data_mean_df = pd.DataFrame(estimated_data_mean, index=estimated_data_mean.index, columns=['estimated'])
+obsv_data_mean_df = pd.DataFrame(obsv_data_mean, index=obsv_data_mean.index, columns=['observed'])
 
 estimated_data_mean_df.head(5)
 #obsv_data_mean_df.head(5)

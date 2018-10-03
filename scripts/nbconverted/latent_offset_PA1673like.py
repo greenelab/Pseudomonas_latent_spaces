@@ -34,8 +34,8 @@ out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673_full_old",
 
 
 # read in data
-lowest_data = pd.read_table(lowest_file, header = 0, sep = '\t', index_col = 0)
-highest_data = pd.read_table(highest_file, header = 0, sep = '\t', index_col = 0)
+lowest_data = pd.read_table(lowest_file, header=0, sep='\t', index_col=0)
+highest_data = pd.read_table(highest_file, header=0, sep='\t', index_col=0)
 lowest_data.head(5)
 
 

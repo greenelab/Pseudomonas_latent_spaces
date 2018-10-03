@@ -34,8 +34,8 @@ out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "cipro_treatment",
 
 
 # read in data
-encodedA_data = pd.read_table(encodedA_file, header = 0, sep = '\t', index_col = 0)
-encodedB_data = pd.read_table(encodedB_file, header = 0, sep = '\t', index_col = 0)
+encodedA_data = pd.read_table(encodedA_file, header=0, sep='\t', index_col=0)
+encodedB_data = pd.read_table(encodedB_file, header=0, sep='\t', index_col=0)
 encodedA_data.head(5)
 
 

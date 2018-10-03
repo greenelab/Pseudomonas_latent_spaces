@@ -40,14 +40,14 @@ seed(randomState)
 data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")  # repo file is zipped
 map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_oxy.txt")
 
-PA1673like_file = os.path.join(os.path.dirname(os.getcwd()), "output", "PA1673_like_genes_test.txt")
+PA1673like_file = os.path.join(os.path.dirname(os.getcwd()), "output", "PA1673_like_genes_v1.txt")
 
 
 # In[4]:
 
 
 # read in data
-data = pd.read_table(data_file, header = 0, sep = '\t', index_col = 0, compression='zip')
+data = pd.read_table(data_file, header=0, sep='\t', index_col=0, compression='zip')
 X = data.transpose()
 X.head(5)
 
@@ -56,7 +56,7 @@ X.head(5)
 
 
 # read in metadata file containing sample ids for dataset to consider (i.e. oxygen level experiment: E-GEOD-52445)
-grp = pd.read_table(map_file, header = 0, sep = '\t', index_col = None)
+grp = pd.read_table(map_file, header=0, sep='\t', index_col=None)
 grp
 
 
@@ -83,7 +83,7 @@ dataset.shape
 
 # Heat map of all genes
 plt.figure(figsize=(10, 50))
-sns.heatmap(dataset[4000:5000], yticklabels = False, cmap = "RdBu_r", annot = False)
+sns.heatmap(dataset[4000:5000], yticklabels=False, cmap="RdBu_r", annot=False)
 #sns.clustermap(dataset)
 
 
@@ -105,10 +105,10 @@ sns.heatmap(PA1673_exp, annot = True, cmap = "RdBu_r")
 # Select genes that have the highest 95% person correlation score as being "PA1673-like"
 
 corr_score = []
-ref_gene = np.reshape(PA1673_exp.values, (14,))
+ref_gene = np.reshape(PA1673_exp.values, (PA1673_exp.shape[1],))
 for i in range(0,dataset.shape[0]):
     corr_score.append(pearsonr(ref_gene, dataset.iloc[i].values))
-corr_score_df = pd.DataFrame(corr_score, index = dataset.index, columns = ['Pearson', 'Pvalue'])
+corr_score_df = pd.DataFrame(corr_score, index=dataset.index, columns=['Pearson', 'Pvalue'])
 
 
 # In[10]:
@@ -116,10 +116,10 @@ corr_score_df = pd.DataFrame(corr_score, index = dataset.index, columns = ['Pear
 
 # Select only those genes that exceed 95% quantile (i.e. PA1673-like)
 threshold = corr_score_df.Pearson.quantile(q = 0.95)
-PA1673_like_genes = corr_score_df.loc[corr_score_df.Pearson >= threshold]
+PA1673_like_genes = corr_score_df.query("Pearson >= @threshold")
 
 # control: check that PA1673 gene is in selected subset
-PA1673_like_genes.loc["PA1673"]
+assert("PA1673" in PA1673_like_genes.index)
 
 type(PA1673_like_genes)
 PA1673_like_genes.to_csv(PA1673like_file, sep='\t')

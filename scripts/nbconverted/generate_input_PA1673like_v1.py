@@ -59,7 +59,7 @@ original_offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA167
 
 
 # Read in data
-data = pd.read_table(data_file, header = 0, sep = '\t', index_col = 0, compression='zip')
+data = pd.read_table(data_file, header=0, sep='\t', index_col=0, compression='zip')
 X = data.transpose()
 X.shape
 
@@ -67,7 +67,7 @@ X.shape
 # In[5]:
 
 
-# Plot distirubtion of gene_id gene expression 
+# Plot distribution of gene_id gene expression 
 sns.distplot(X[gene_id])
 
 
