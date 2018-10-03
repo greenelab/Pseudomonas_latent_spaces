@@ -20,19 +20,19 @@ np.random.seed(123)
 
 
 # load arguments
-max_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "train_maxO2_2layer_10latent_encoded.txt")
-min_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "train_minO2_2layer_10latent_encoded.txt")
+max_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "PA1673", "train_minExp_2layer_10latent_encoded.txt")
+min_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "PA1673", "train_maxExp_2layer_10latent_encoded.txt")
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_offset_2layer_10latent.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673", "train_offset_2layer_10latent.txt")
 
 
 # In[3]:
 
 
 # read in data
-max_data = pd.read_table(max_file, header = 0, sep = '\t', index_col = 0)
-min_data = pd.read_table(min_file, header = 0, sep = '\t', index_col = 0)
+max_data = pd.read_table(max_file, header=0, sep='\t', index_col=0)
+min_data = pd.read_table(min_file, header=0, sep='\t', index_col=0)
 
 min_data
 
@@ -48,7 +48,7 @@ max_data
 
 # Generate offset using average gene expression in original dataset
 train_offset_latent = min_data.values - max_data.values
-train_offset_latent = pd.DataFrame(train_offset_latent, columns = min_data.columns)
+train_offset_latent = pd.DataFrame(train_offset_latent, columns=min_data.columns)
 train_offset_latent
 
 

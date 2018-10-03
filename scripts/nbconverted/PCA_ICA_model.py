@@ -45,7 +45,7 @@ method = 'pca'
 
 
 # read in data
-data = pd.read_table(data_file, header = 0, sep = '\t', index_col = 0)
+data = pd.read_table(data_file, header=0, sep='\t', index_col=0)
 X = data.transpose()
 X.head(5)
 #X.shape
@@ -78,7 +78,7 @@ else:
 X_ann = pd.DataFrame(reduced_X, index=X.index, columns=['1', '2'])
 
 # read in mapping file (sample id --> phenotype)
-mapper = pd.read_table(map_file, header = 0, sep = '\t', index_col = 0)
+mapper = pd.read_table(map_file, header=0, sep='\t', index_col=0)
 
 # Join 
 X_new = pd.merge(X_ann, mapper, left_index=True, right_index=True)
@@ -90,7 +90,7 @@ X_new.head(10)
 
 
 # Plot
-fg = sns.lmplot(x = '1', y = '2', data = X_new, hue = 'medium', fit_reg = False)
+fg = sns.lmplot(x='1', y='2', data=X_new, hue='medium', fit_reg=False)
 fg.add_legend()
 fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz","{}.png".format(method))
 fg.fig.suptitle(method.upper()+' compressed data')

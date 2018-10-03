@@ -29,19 +29,19 @@ seed(randomState)
 
 
 # load arguments
-estimated_file = os.path.join(os.path.dirname(os.getcwd()), "output", "oxygen_level", "estimated_test_t90_2layer_10latent.txt")
-obsv_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_minO2.txt")
+estimated_file = os.path.join(os.path.dirname(os.getcwd()), "output", "PA1673_full_old", "estimated_test_mid2_2layer_10latent.txt")
+obsv_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673_full_old", "test_mid2_PA1673.txt")
 
 # output
-fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "oxygen_level", "Tybalt_2layer_transform_t90.png")
+fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "PA1673_full_old", "Latent_mid2.png")
 
 
 # In[4]:
 
 
 # read in data
-estimated_data = pd.read_table(estimated_file, header = 0, sep = '\t', index_col = 0)
-obsv_data = pd.read_table(obsv_file, header = 0, sep = '\t', index_col = 0)
+estimated_data = pd.read_table(estimated_file, header=0, sep='\t', index_col=0)
+obsv_data = pd.read_table(obsv_file, header=0, sep='\t', index_col=0)
 
 estimated_data.columns = obsv_data.columns  #Add gene ids to merge on later
 
@@ -56,8 +56,8 @@ estimated_data
 estimated_data_mean = estimated_data.mean(axis=0)
 obsv_data_mean = obsv_data.mean(axis=0)
 
-estimated_data_mean_df = pd.DataFrame(estimated_data_mean, index = estimated_data_mean.index, columns=['estimated'])
-obsv_data_mean_df = pd.DataFrame(obsv_data_mean, index = obsv_data_mean.index, columns = ['observed'])
+estimated_data_mean_df = pd.DataFrame(estimated_data_mean, index=estimated_data_mean.index, columns=['estimated'])
+obsv_data_mean_df = pd.DataFrame(obsv_data_mean, index=obsv_data_mean.index, columns=['observed'])
 
 estimated_data_mean_df.head(5)
 #obsv_data_mean_df.head(5)

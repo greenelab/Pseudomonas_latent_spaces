@@ -40,7 +40,7 @@ map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_sampl
 
 
 # read in data
-data = pd.read_table(data_file, header = 0, sep = '\t', index_col = 0)
+data = pd.read_table(data_file, header=0, sep='\t', index_col=0)
 X = data.transpose()
 X.head(5)
 
@@ -75,7 +75,7 @@ tsne_X
 X_ann = pd.DataFrame(tsne_X, index=X.index, columns=['tsne1', 'tsne2'])
 
 # read in mapping file (sample id -- phenotype)
-mapper = pd.read_table(map_file, header = 0, sep = '\t', index_col = 0)
+mapper = pd.read_table(map_file, header=0, sep='\t', index_col=0)
 
 # Join 
 X_new = pd.merge(X_ann, mapper, left_index=True, right_index=True)
@@ -87,7 +87,7 @@ X_new.head(5)
 
 # Plot
 # Note: t-SNE has a cost function that is not convex, i.e. with different initializations we can get different results.
-fg = sns.lmplot(x = 'tsne1', y = 'tsne2', data = X_new, hue = 'medium', fit_reg = False)
+fg = sns.lmplot(x='tsne1', y='tsne2', data=X_new, hue='medium', fit_reg=False)
 fg.add_legend()
 fig_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "all_dim.png")
 fg.fig.suptitle('No compression')

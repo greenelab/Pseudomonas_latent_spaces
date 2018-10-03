@@ -28,21 +28,21 @@ seed(randomState)
 
 
 # load arguments
-test_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "test_t5_2layer_10latent_encoded.txt")
-offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "oxygen_level", "train_offset_2layer_10latent.txt")
+test_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "PA1673_full_old", "test_lowest_2layer_10latent_encoded.txt")
+offset_file = os.path.join(os.path.dirname(os.getcwd()), "data", "PA1673_full_old", "train_offset_2layer_10latent.txt")
 
 # Percentage of the offset to apply to the dataset
-percentage = 0.95
+percentage = 0.554
 
 # output files
-out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "oxygen_level", "estimated_test_t90_2layer_10latent_encoded.txt")
+out_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", "PA1673_full_old", "estimated_test_mid2_2layer_10latent_encoded.txt")
 
 
 # In[3]:
 
 
 # read in data
-test_data = pd.read_table(test_file, header = 0, sep = '\t', index_col = 0)
+test_data = pd.read_table(test_file, header=0, sep='\t', index_col=0)
 
 test_data
 
@@ -51,7 +51,8 @@ test_data
 
 
 # read offset
-offset_data = pd.read_table(offset_file, header = 0, sep = '\t', index_col = 0)
+offset_data = pd.read_table(offset_file, header=0, sep='\t', index_col=0)
+#offset_data = pd.read_table(offset_file, header=None, sep = '\t', index_col = 0).T #original
     
 offset_data
 

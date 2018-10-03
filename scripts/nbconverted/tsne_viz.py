@@ -38,7 +38,7 @@ map_file = os.path.join(os.path.dirname(os.getcwd()), "metadata", "mapping_sampl
 
 
 # read in encoded data
-X = pd.read_table(encoded_data_file, header = 0, sep = '\t', index_col = 0)
+X = pd.read_table(encoded_data_file, header=0, sep='\t', index_col=0)
 #X = pd.read_table(encoded_data_file, header = None, sep = '\t', index_col = None) # eADAGE doesn't have header
 X = pd.DataFrame(X)
 X.head(5)
@@ -68,7 +68,7 @@ tsne_X.index.name = 'sample_id'
 # meaning you can attach the index back afterward
 
 # read in mapping file (sample id --> phenotype)
-mapper = pd.read_table(map_file, header = 0, sep = '\t', index_col = 0)
+mapper = pd.read_table(map_file, header=0, sep='\t', index_col=0)
 
 # Join 
 X_new = pd.merge(tsne_X, mapper, left_index=True, right_index=True)
@@ -82,7 +82,7 @@ X_new.head(5)
 # Plot
 # Note: t-SNE has a cost function that is not convex, i.e. with different initializations we can get different results.
 
-fg = sns.lmplot(x = '1', y = '2', data = X_new, hue = 'medium', fit_reg = False)
+fg = sns.lmplot(x='1', y='2', data=X_new, hue='medium', fit_reg=False)
 fg.add_legend()
 fig_file = map_file = os.path.join(os.path.dirname(os.getcwd()), "viz", "{}.png".format(file_name))
 fg.fig.suptitle(file_name.replace('_',' ').capitalize())
