@@ -62,6 +62,12 @@ from keras import metrics, optimizers
 from keras.callbacks import Callback
 
 def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, latent_dim, epsilon_std, base_dir, analysis_name):
+    """
+    Train 2-layer Tybalt model using input dataset
+    
+    Output:
+     Encoding and decoding neural networks to use in downstream analysis
+    """
     
     # --------------------------------------------------------------------------------------------------------------------
     # Files

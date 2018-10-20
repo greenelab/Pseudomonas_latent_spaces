@@ -1,12 +1,5 @@
-
-# coding: utf-8
-
-# In[1]:
-
-
 #----------------------------------------------------------------------------------------------------------------
 # Helper functions
-# scale factor = PA1673 expression/ (average high PA1673 expression - avgerage low PA1673 expression)  
 #----------------------------------------------------------------------------------------------------------------
 import pandas as pd
 import numpy as np
@@ -16,10 +9,10 @@ def get_scale_factor (ref_file, gene_id, expression_profile):
     
 
     """
-    Describe the function
-
-    Usage: For import only
-    from utils import get_scale_factor
+    Determine how much to scale offset based on distance along the target gene expression gradient
+    
+    Output:
+     scale factor = intermediate gene expression/ (average high target gene expression - avgerage low target gene expression) 
     """
 
     # Read in reference gene expression file

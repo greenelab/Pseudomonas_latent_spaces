@@ -3,17 +3,6 @@
 # (updated October 2018) 
 #
 # Define offset vectors
-#
-# Gene space offset:
-#
-# offset_vector = Average(gene expression of samples that have the highest 5% of PA1673 expression) -  
-# Average(gene expression of samples that have the lowest 5% of PA1673 expression) 
-# Gene expression does not include PA1673
-#
-# Latent space offset
-# offset_vector = Average(encoded gene expression of samples that have the highest 5% of PA1673 expression) -  
-# Average(encoded gene expression of samples that have the lowest 5% of PA1673 expression) 
-# Gene expression does not include PA1673
 #-------------------------------------------------------------------------------------------------------------------------------
 import os
 import pandas as pd
@@ -26,6 +15,19 @@ from numpy.random import seed
 seed(randomState)
 
 def gene_space_offset(data_dir, gene_id):
+    """
+    Gene space offset:
+
+    offset_vector = average(gene expression of samples that have the highest 5% of target gene expression) -  
+      average(gene expression of samples that have the lowest 5% of target gene expression) 
+    
+    Output:
+     offset vector (1 x 5548 genes)
+     
+    Note: Gene expression does not include the target gene used as the condition
+    
+    """
+    
     # Load arguments
     target_gene_file = os.path.join(data_dir, "PA1673.txt")
     non_target_gene_file = os.path.join(data_dir, "train_model_input.txt.xz")
@@ -51,7 +53,7 @@ def gene_space_offset(data_dir, gene_id):
     low_ids = target_gene_sorted[target_gene_sorted[gene_id]<= threshold_low].index
     low_exp = non_target_gene_data.loc[low_ids]
 
-    # Get sample IDs with the highest 5% of PA1673 expression
+    # Get sample IDs with the highest 5% of target gene expression
     threshold_high = np.percentile(target_gene_sorted[gene_id], 95)
     high_ids = target_gene_sorted[target_gene_sorted[gene_id]>= threshold_high].index
     high_exp = non_target_gene_data.loc[high_ids]
@@ -79,6 +81,18 @@ def gene_space_offset(data_dir, gene_id):
     
 
 def latent_space_offset(data_dir, model_dir, encoded_dir, gene_id):
+    """
+    Latent space offset
+    
+    offset_vector = average(encoded gene expression of samples that have the highest 5% of target gene expression) -  
+      average(encoded gene expression of samples that have the lowest 5% of target gene expression) 
+    
+    Output:
+     encoded offset vector (1 x 10 latent features)
+     
+    Note: Gene expression does not include target gene used as the condition
+    """
+    
     # Load arguments
     target_gene_file = os.path.join(data_dir, "PA1673.txt")
     non_target_gene_file = os.path.join(data_dir, "train_model_input.txt.xz")
@@ -101,16 +115,16 @@ def latent_space_offset(data_dir, model_dir, encoded_dir, gene_id):
     # load weights into new model
     loaded_model.load_weights(weights_file)
 
-    # Sort PA1673_data by expression (lowest --> highest)
+    # Sort target gene data by expression (lowest --> highest)
     target_gene_sorted = target_gene_data.sort_values(by=[gene_id])
 
     # Collect the extreme gene expressions
-    # Get sample IDs with the lowest 5% of PA1673 expression
+    # Get sample IDs with the lowest 5% of target gene expression
     threshold_low = np.percentile(target_gene_sorted[gene_id], 5)
     low_ids = target_gene_sorted[target_gene_sorted[gene_id]<= threshold_low].index
     low_exp = non_target_gene_data.loc[low_ids]
 
-    # Get sample IDs with the highest 5% of PA1673 expression
+    # Get sample IDs with the highest 5% of target gene expression
     threshold_high = np.percentile(target_gene_sorted[gene_id], 95)
     high_ids = target_gene_sorted[target_gene_sorted[gene_id]>= threshold_high].index
     high_exp = non_target_gene_data.loc[high_ids]

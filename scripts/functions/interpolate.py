@@ -1,11 +1,8 @@
 #-------------------------------------------------------------------------------------------------------------------------------
 # By Alexandra Lee 
 # (updated October 2018) 
-#
-# Interpolate in gene space:
-# Add scale factor of offset vector to each sample to transform the gene expression 
-# profile along some gradient
-#  
+# 
+# Make predictions about intermediate gene expression using offset vector 
 #-------------------------------------------------------------------------------------------------------------------------------
 import os
 import sys
@@ -22,6 +19,17 @@ from numpy.random import seed
 seed(randomState)
 
 def interpolate_gene_space(data_dir, gene_id, out_dir):
+    """
+    Interpolate in gene space:
+
+    Add scale factor of offset vector to each sample to transform the gene expression 
+     profile along some gradient
+     
+    Output: 
+     Predicted expression profile per sample (intermediate samples x 2 statistical scores- correlation and pvalue)
+     Target gene expression sorted by expression level for reference when plotting
+    """
+    
     # Load arguments
     target_gene_file = os.path.join(data_dir, "PA1673.txt")
     non_target_gene_file = os.path.join(data_dir, "train_model_input.txt.xz")
@@ -71,6 +79,16 @@ def interpolate_gene_space(data_dir, gene_id, out_dir):
     target_gene_sorted.to_csv(sorted_file, sep='\t')
 
 def interpolate_latent_space(data_dir, model_dir, encoded_dir, gene_id, out_dir):
+    """
+    Interpolate in gene space:
+
+    Add scale factor of offset vector to each encoded sample to transform the gene expression 
+     profile along some gradient then decode
+     
+    Output: 
+     Predicted expression profile per sample (intermediate samples x 2 statistical scores- correlation and pvalue)
+    """
+    
     # Load arguments
     target_gene_file = os.path.join(data_dir, "PA1673.txt")
     non_target_gene_file = os.path.join(data_dir, "train_model_input.txt.xz")

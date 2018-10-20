@@ -2,14 +2,7 @@
 # By Alexandra Lee 
 # (updated October 2018) 
 #
-# Generate input files
-# Dataset: Pseudomonas aeruginosa gene expression from compendium 
-# referenced in https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5069748/
-# 
-# Condition: expression of PA1673 gene
-#
-# Processing:
-#    1. Remove PA1673 gene that will be used as the "condition" (phenotype) for this analysis
+# Generate input files for each analysis
 #-------------------------------------------------------------------------------------------------------------------------------
 import os
 import pandas as pd
@@ -20,6 +13,18 @@ from numpy.random import seed
 seed(randomState)
 
 def generate_input_PA1673_gradient(base_dir):
+    """
+    Dataset: Pseudomonas aeruginosa gene expression from compendium 
+    referenced in https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5069748/
+
+    Condition: expression of PA1673 gene
+
+    Processing:
+     1. Remove PA1673 gene that will be used as the "condition" (phenotype) for this analysis
+     
+    Output:  
+     Dataframe (1191 samples x 5548 genes) 
+    """
     
     # Load arguments
     data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")

@@ -18,6 +18,12 @@ from numpy.random import seed
 seed(randomState)
 
 def plot_corr_gradient(out_dir, viz_dir):
+    """
+    For each sample plot correlation score estimated after performing interporlation in gene space and latent space
+    Plot use LOWESS smoothing to identify overall trend in the data
+    
+    """
+    
     # load arguments
     gene_space_file = os.path.join(out_dir, "corr_gene_space.txt")
     latent_space_file = os.path.join(out_dir, "corr_latent_space.txt")
