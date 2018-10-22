@@ -56,5 +56,5 @@ def generate_input_PA1673_gradient(base_dir):
     input_holdout = X.drop(columns=[gene_id])
 
     # Output
-    input_holdout.to_csv(train_input_file, sep='\t', compression='xz')
-    PA1673_only.to_csv(PA1673_file, sep='\t')
+    input_holdout.to_csv(train_input_file, sep='\t', compression='xz', float_format="%.5g")
+    PA1673_only.to_csv(PA1673_file, sep='\t', float_format="%.5g")

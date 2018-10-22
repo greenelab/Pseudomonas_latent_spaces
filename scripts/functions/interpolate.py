@@ -100,7 +100,7 @@ def interpolate_in_gene_space(data_dir, gene_id, out_dir, percent_low, percent_h
 
     # Output estimated gene experession values
     corr_score_df.to_csv(corr_file, sep='\t')
-    target_gene_sorted.to_csv(sorted_file, sep='\t')
+    target_gene_sorted.to_csv(sorted_file, sep='\t', float_format="%.5g")
 
 def interpolate_in_latent_space(data_dir, model_dir, encoded_dir, gene_id, out_dir, percent_low, percent_high):
     

@@ -80,11 +80,11 @@ def gene_space_offset(data_dir, gene_id, percent_low, percent_high):
     offset_gene_space_df = pd.Series.to_frame(offset_gene_space).T
 
     # output lowest and highest expressing samples
-    low_exp.to_csv(lowest_file, sep='\t')
-    high_exp.to_csv(highest_file, sep='\t')
+    low_exp.to_csv(lowest_file, sep='\t', float_format="%.5g")
+    high_exp.to_csv(highest_file, sep='\t', float_format="%.5g")
 
     # ouput gene space offset vector
-    offset_gene_space_df.to_csv(offset_file, sep='\t')
+    offset_gene_space_df.to_csv(offset_file, sep='\t', float_format="%.5g")
     
 
 def latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_low, percent_high):
@@ -170,9 +170,9 @@ def latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_low, 
     offset_latent_space_df = pd.Series.to_frame(offset_latent_space).T
 
     # output lowest and highest expressing samples
-    low_exp_encoded_df.to_csv(lowest_file, sep='\t')
-    high_exp_encoded_df.to_csv(highest_file, sep='\t')
+    low_exp_encoded_df.to_csv(lowest_file, sep='\t', float_format="%.5g")
+    high_exp_encoded_df.to_csv(highest_file, sep='\t', float_format="%.5g")
 
     # ouput gene space offset vector
-    offset_latent_space_df.to_csv(offset_file, sep='\t')
+    offset_latent_space_df.to_csv(offset_file, sep='\t', float_format="%.5g")
     
