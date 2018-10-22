@@ -60,7 +60,6 @@ for each_dir in base_dirs:
 # In[3]:
 
 
-"""
 # Pre-process input
 data_dir = os.path.join(base_dirs[0], analysis_name)
 generate_input.generate_input_PA1673_gradient(data_dir)
@@ -77,22 +76,27 @@ epsilon_std = 1.0
 base_dir = os.path.dirname(os.getcwd())
 vae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, latent_dim, epsilon_std, base_dir, analysis_name)
 
-# Define offset vectors in gene space and latent space"""
+
+# Define offset vectors in gene space and latent space
 data_dir = os.path.join(base_dirs[0], analysis_name)
 target_gene = "PA1673"
-"""
-def_offset.gene_space_offset(data_dir, target_gene)
-"""
+percent_low = 5
+percent_high = 95
+
+def_offset.gene_space_offset(data_dir, target_gene, percent_low, percent_high)
+
 model_dir = os.path.join(base_dirs[2], analysis_name)
 encoded_dir = os.path.join(base_dirs[1], analysis_name)
-"""
-def_offset.latent_space_offset(data_dir, model_dir, encoded_dir, target_gene)
-"""
+
+def_offset.latent_space_offset(data_dir, model_dir, encoded_dir, target_gene, percent_low, percent_high)
+
 
 # Predict gene expression using offset in gene space and latent space
 out_dir = os.path.join(base_dirs[3], analysis_name)
-interpolate.interpolate_gene_space(data_dir, target_gene, out_dir)
-interpolate.interpolate_latent_space(data_dir, model_dir, encoded_dir, target_gene, out_dir)
+
+interpolate.interpolate_in_gene_space(data_dir, target_gene, out_dir, percent_low, percent_high)
+interpolate.interpolate_in_latent_space(data_dir, model_dir, encoded_dir, target_gene, out_dir, percent_low, percent_high)
+
 
 # Plot prediction per sample along gradient of PA1673 expression
 viz_dir = os.path.join(base_dirs[5], analysis_name)

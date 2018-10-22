@@ -10,7 +10,6 @@ import os
 import pandas as pd
 import numpy as np
 import seaborn as sns
-import matplotlib.pyplot as plt
 from statsmodels.nonparametric.smoothers_lowess import lowess
 
 randomState = 123
@@ -34,14 +33,12 @@ def plot_corr_gradient(out_dir, viz_dir):
     fig2_file = os.path.join(viz_dir, "corr.png")
 
     # read in data
-    gene_corr_data = pd.read_table(gene_space_file, header=0, sep='\t', index_col=0, names=['gene_space'])
-    latent_corr_data = pd.read_table(latent_space_file, header=0, sep='\t', index_col=0, names=['latent_space'])
-    sorted_id = pd.read_table(sorted_target_gene_file, header=0, sep='\t', index_col=0)
+    gene_corr_data = pd.read_table(gene_space_file, header=0, index_col=0, names=['gene_space'])
+    latent_corr_data = pd.read_table(latent_space_file, header=0, index_col=0, names=['latent_space'])
+    sorted_id = pd.read_table(sorted_target_gene_file, header=0, index_col=0)
 
     # Join 
     X = pd.merge(gene_corr_data, latent_corr_data, left_index=True, right_index=True)
-    X.head(5)
-
 
     # Plot smoothing curve 
     num_samples = gene_corr_data.shape[0]
@@ -65,4 +62,3 @@ def plot_corr_gradient(out_dir, viz_dir):
     fg=sns.jointplot(x='gene_space', y='latent_space', data=X, kind='hex');
     fg.set_axis_labels('Gene space correlation', 'Latent space correlation')
     fg.savefig(fig2_file)
-

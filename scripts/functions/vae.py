@@ -73,7 +73,7 @@ def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_d
     # Files
     # --------------------------------------------------------------------------------------------------------------------
     data_file =  os.path.join(base_dir, "data", analysis_name, "train_model_input.txt.xz")
-    rnaseq = pd.read_table(data_file,sep='\t',index_col=0, header=0, compression='xz')
+    rnaseq = pd.read_table(data_file, index_col=0, header=0, compression='xz')
 
 
     # --------------------------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_d
     original_dim = rnaseq.shape[1]
     beta = K.variable(0)
 
-    stat_file =  os.path.join(base_dir, "stats", analysis_name, "tybalt_2layer_{}latent_stats.csv".format(latent_dim))
+    stat_file =  os.path.join(base_dir, "stats", analysis_name, "tybalt_2layer_{}latent_stats.tsv".format(latent_dim))
     hist_plot_file =os.path.join(base_dir, "stats", analysis_name, "tybalt_2layer_{}latent_hist.png".format(latent_dim))
 
     encoded_file =os.path.join(base_dir, "encoded", analysis_name, 
@@ -291,7 +291,8 @@ def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_d
     ax.set_ylabel('VAE Loss')
     fig = ax.get_figure()
     fig.savefig(hist_plot_file)
-
+    
+    del ax, fig
 
     # --------------------------------------------------------------------------------------------------------------------
     # Output
@@ -303,7 +304,7 @@ def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_d
     history_df = history_df.assign(batch_size=batch_size)
     history_df = history_df.assign(epochs=epochs)
     history_df = history_df.assign(kappa=kappa)
-    history_df.to_csv(stat_file, sep='\t')
+    history_df.to_csv(stat_file, sep='\t', index=False)
 
     # Save latent space representation
     encoded_rnaseq_df.to_csv(encoded_file, sep='\t')
