@@ -55,7 +55,7 @@ def interpolate_in_gene_space(data_dir, gene_id, out_dir, percent_low, percent_h
     """
     
     # Load arguments
-    target_gene_file = os.path.join(data_dir, "PA1673.txt")
+    target_gene_file = os.path.join(data_dir, gene_id + ".txt")
     non_target_gene_file = os.path.join(data_dir, "train_model_input.txt.xz")
     offset_file = os.path.join(data_dir, "offset_gene_space.txt")
 
@@ -145,7 +145,7 @@ def interpolate_in_latent_space(data_dir, model_dir, encoded_dir, gene_id, out_d
     """
     
     # Load arguments
-    target_gene_file = os.path.join(data_dir, "PA1673.txt")
+    target_gene_file = os.path.join(data_dir, gene_id + ".txt")
     non_target_gene_file = os.path.join(data_dir, "train_model_input.txt.xz")
     offset_file = os.path.join(encoded_dir, "offset_latent_space.txt")
 

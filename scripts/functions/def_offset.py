@@ -48,7 +48,7 @@ def gene_space_offset(data_dir, gene_id, percent_low, percent_high):
     """
     
     # Load arguments
-    target_gene_file = os.path.join(data_dir, "PA1673.txt")
+    target_gene_file = os.path.join(data_dir, gene_id + ".txt")
     non_target_gene_file = os.path.join(data_dir, "train_model_input.txt.xz")
 
     # Output files
@@ -121,7 +121,7 @@ def latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_low, 
     """
     
     # Load arguments
-    target_gene_file = os.path.join(data_dir, "PA1673.txt")
+    target_gene_file = os.path.join(data_dir, gene_id + ".txt")
     non_target_gene_file = os.path.join(data_dir, "train_model_input.txt.xz")
 
     model_file = os.path.join(model_dir, "tybalt_2layer_10latent_encoder_model.h5")
