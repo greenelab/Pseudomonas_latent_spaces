@@ -31,6 +31,7 @@ import os
 import pandas as pd
 import numpy as np
 import random
+import seaborn as sns
 
 from functions import generate_input, vae, def_offset, interpolate, pca, plot
 
@@ -133,6 +134,26 @@ assert(geneA not in geneSetC)
 # In[11]:
 
 
+# checkpoint
+# plot expression of select gene C across all samples BEFORE transformation
+
+# Randomly from gene set C
+geneC = random.sample(geneSetC, 1)[0]
+
+# Dataframe with only gene C and only gene A
+geneC_only = pd.DataFrame(data[geneC], index=data.index, columns=[geneC])
+geneA_only = pd.DataFrame(data[geneA], index=data.index, columns=[geneA])
+
+# Join 
+X = pd.merge(geneA_only, geneC_only, left_index=True, right_index=True)
+
+# Plot
+sns.regplot(x=geneA, y=geneC, data=X, scatter=True)
+
+
+# In[12]:
+
+
 # Loop through all samples
 num_samples = data.shape[1]
 
@@ -148,14 +169,31 @@ for sample_id in data.index:
 data[data>=1.0] = 1.0
 
 
-# In[12]:
+# In[13]:
+
+
+# checkpoint
+# plot expression of select gene C across all samples AFTER transformation
+
+# Dataframe with only gene C and only gene A
+geneC_only = pd.DataFrame(data[geneC], index=data.index, columns=[geneC])
+geneA_only = pd.DataFrame(data[geneA], index=data.index, columns=[geneA])
+
+# Join 
+X = pd.merge(geneA_only, geneC_only, left_index=True, right_index=True)
+
+# Plot
+sns.regplot(x=geneA, y=geneC, data=X, scatter=True)
+
+
+# In[14]:
 
 
 # checkpoint: after transformation
 # data.loc[data[geneA]<=thresholdA,geneSetC[0]]
 
 
-# In[13]:
+# In[15]:
 
 
 # Dataframe with only gene A
@@ -165,14 +203,22 @@ geneA_only = pd.DataFrame(data[geneA], index=data.index, columns=[geneA])
 data_holdout = data.drop(columns=[geneA])
 
 
-# In[14]:
+# In[16]:
+
+
+# checkpoint
+# plot distribution of gene A
+geneA_only.hist()
+
+
+# In[17]:
 
 
 # checkpoint
 data_holdout.shape
 
 
-# In[15]:
+# In[18]:
 
 
 # Create list of base directories
@@ -194,7 +240,7 @@ for each_dir in base_dirs:
         print('creating new directory: {}'.format(analysis_dir))
 
 
-# In[16]:
+# In[19]:
 
 
 # Output the new gene expression values for each sample
@@ -221,10 +267,11 @@ geneA_file = os.path.join(base_dirs[0], analysis_name, geneA + ".txt")
 geneA_only.to_csv(geneA_file, sep='\t', float_format="%.5g")
 
 
-# In[17]:
+# In[20]:
 
 
 get_ipython().run_line_magic('time', '')
+
 # Train models on input dataset
 
 # params
