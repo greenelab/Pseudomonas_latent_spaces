@@ -61,7 +61,10 @@ from keras.models import Model, Sequential
 from keras import metrics, optimizers
 from keras.callbacks import Callback
 
-def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, latent_dim, epsilon_std, base_dir, analysis_name):
+from helper_ae import sampling, CustomVariationalLayer, WarmUpCallback
+
+def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
+                    latent_dim, epsilon_std, base_dir, analysis_name):
     """
     Train 2-layer Tybalt model using input dataset
     
@@ -74,7 +77,6 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, 
     # --------------------------------------------------------------------------------------------------------------------
     data_file =  os.path.join(base_dir, "data", analysis_name, "train_model_input.txt.xz")
     rnaseq = pd.read_table(data_file, index_col=0, header=0, compression='xz')
-
 
     # --------------------------------------------------------------------------------------------------------------------
     # Initialize hyper parameters
@@ -109,67 +111,6 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, 
     weights_decoder_file =os.path.join(base_dir, "models", analysis_name,
                                        "ae_2layer_{}latent_decoder_weights.h5".format(latent_dim))
 
-
-    # --------------------------------------------------------------------------------------------------------------------
-    # Functions
-    #
-    # Based on publication by Greg et. al. 
-    # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5728678/
-    # https://github.com/greenelab/tybalt/blob/master/scripts/vae_pancancer.py
-    # --------------------------------------------------------------------------------------------------------------------
-
-    # Function for reparameterization trick to make model differentiable
-    def sampling(args):
-
-        # Function with args required for Keras Lambda function
-        z_mean, z_log_var = args
-
-        # Draw epsilon of the same shape from a standard normal distribution
-        epsilon = K.random_normal(shape=tf.shape(z_mean), mean=0.,
-                                  stddev=epsilon_std)
-
-        # The latent vector is non-deterministic and differentiable
-        # in respect to z_mean and z_log_var
-        z = z_mean + K.exp(z_log_var / 2) * epsilon
-        return z
-
-
-    class CustomVariationalLayer(Layer):
-        """
-        Define a custom layer that learns and performs the training
-        """
-        def __init__(self, **kwargs):
-            # https://keras.io/layers/writing-your-own-keras-layers/
-            self.is_placeholder = True
-            super(CustomVariationalLayer, self).__init__(**kwargs)
-
-        def vae_loss(self, x_input, x_decoded):
-            reconstruction_loss = original_dim *             metrics.binary_crossentropy(x_input, x_decoded)
-            kl_loss = - 0.5 * K.sum(1 + z_log_var_encoded -
-                                    K.square(z_mean_encoded) -
-                                    K.exp(z_log_var_encoded), axis=-1)
-            return K.mean(reconstruction_loss + (K.get_value(beta) * kl_loss))
-
-        def call(self, inputs):
-            x = inputs[0]
-            x_decoded = inputs[1]
-            loss = self.vae_loss(x, x_decoded)
-            self.add_loss(loss, inputs=inputs)
-            # We won't actually use the output.
-            return x
-
-
-    class WarmUpCallback(Callback):
-        def __init__(self, beta, kappa):
-            self.beta = beta
-            self.kappa = kappa
-
-        # Behavior on each epoch
-        def on_epoch_end(self, epoch, logs={}):
-            if K.get_value(self.beta) <= 1:
-                K.set_value(self.beta, K.get_value(self.beta) + self.kappa)
-
-
     # --------------------------------------------------------------------------------------------------------------------
     # Data initalizations
     # --------------------------------------------------------------------------------------------------------------------
@@ -181,7 +122,6 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, 
 
     # Create a placeholder for an encoded (original-dimensional)
     rnaseq_input = Input(shape=(original_dim, ))
-
 
     # --------------------------------------------------------------------------------------------------------------------
     # Architecture of VAE
@@ -258,7 +198,6 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, 
     vae = Model(rnaseq_input, vae_layer)
     vae.compile(optimizer=adam, loss=None, loss_weights=[beta])
 
-
     # --------------------------------------------------------------------------------------------------------------------
     # Training
     # --------------------------------------------------------------------------------------------------------------------
@@ -268,7 +207,6 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, 
     hist = vae.fit(np.array(rnaseq_train_df), shuffle=True, epochs=epochs, batch_size=batch_size,
                    validation_data=(np.array(rnaseq_test_df), None),
                    callbacks=[WarmUpCallback(beta, kappa)])
-
 
     # --------------------------------------------------------------------------------------------------------------------
     # Use trained model to make predictions
@@ -280,7 +218,6 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, 
 
     encoded_rnaseq_df.columns.name = 'sample_id'
     encoded_rnaseq_df.columns = encoded_rnaseq_df.columns + 1
-
 
     # --------------------------------------------------------------------------------------------------------------------
     # Visualize training performance
@@ -327,4 +264,3 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, 
 
     # serialize weights to HDF5
     decoder.save_weights(weights_decoder_file)
-

@@ -92,7 +92,7 @@ def gene_space_offset(data_dir, gene_id, percent_low, percent_high):
 def vae_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_low, percent_high):
     
     """
-    latent_space_offset(data_dir: string, model_dir: string, encoded_dir: string, gene_id: string):
+    vae_latent_space_offset(data_dir: string, model_dir: string, encoded_dir: string, gene_id: string):
 
     input: 
         data_dir: directory containing the raw gene expression data for all genes including the target gene (see
@@ -104,7 +104,7 @@ def vae_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_l
         gene_id: gene you are using as the "phenotype" to sort samples by 
         
                  This gene is referred to as "target_gene" in comments below.
-                 In "interpolate_in_latent_space.py", after we sort samples based on the expression level of the
+                 In "interpolate_in_vae_latent_space.py", after we sort samples based on the expression level of the
                  target gene, we want to predict the expression profile of the OTHER genes at different levels
                  of target gene expression.
         
@@ -119,7 +119,6 @@ def vae_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_l
     output:
         encoded offset vector (1 x number of latent space features)     
         Note: offset vector does not include the target gene 
-     
     """
     
     # Load arguments
@@ -180,7 +179,33 @@ def vae_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_l
     
 def pca_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_low, percent_high):
     """
-    lol here is a comment
+    pca_latent_space_offset(data_dir: string, model_dir: string, encoded_dir: string, gene_id: string):
+
+    input: 
+        data_dir: directory containing the raw gene expression data for all genes including the target gene (see
+                    gene_id definition).
+        model_dir: directory containing the learned pca models
+        
+        encoded_dir: directory to use to output offset vector to
+        
+        gene_id: gene you are using as the "phenotype" to sort samples by 
+        
+                 This gene is referred to as "target_gene" in comments below.
+                 In "interpolate_in_pca_latent_space.py", after we sort samples based on the expression level of the
+                 target gene, we want to predict the expression profile of the OTHER genes at different levels
+                 of target gene expression.
+        
+        percent_low: integer between 0 and 1
+    
+        percent_high: integer between 0 and 1
+    
+    computation:
+        offset_vector = average(encoded gene expression of samples that have the highest 5% of target gene expression) -  
+          average(encoded gene expression of samples that have the lowest 5% of target gene expression) 
+    
+    output:
+        encoded offset vector (1 x number of latent space features)     
+        Note: offset vector does not include the target gene 
     """
     # Load arguments
     target_gene_file = os.path.join(data_dir, gene_id + ".txt")

@@ -20,7 +20,9 @@ seed(randomState)
 def pca_model(base_dir, analysis_name, num_PCs):
     
     """
-    Description
+    Uses PCA to compress input data
+    
+    Return saved PCA model
     """
     data_file =  os.path.join(base_dir, "data", analysis_name, "train_model_input.txt.xz")
     rnaseq = pd.read_table(data_file, index_col=0, header=0, compression='xz')

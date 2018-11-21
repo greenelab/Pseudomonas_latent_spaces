@@ -41,7 +41,7 @@ randomState = 5
 seed(randomState)
 
 
-# In[2]:
+# In[ ]:
 
 
 # Hyperparameters
@@ -63,17 +63,17 @@ thresholdA = 0.5
 effect_sizeA = 0.5
 
 # Name of analysis
-analysis_name = 'sim_lin_5'
+analysis_name = 'sim_lin_test'
 
 
-# In[3]:
+# In[ ]:
 
 
 # Load arguments
 data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")
 
 
-# In[4]:
+# In[ ]:
 
 
 # Read in data
@@ -81,7 +81,7 @@ data = pd.read_table(data_file, header=0, sep='\t', index_col=0, compression='zi
 data.head(5)
 
 
-# In[5]:
+# In[ ]:
 
 
 # Randomly select gene A if not specified
@@ -93,14 +93,14 @@ if not geneA:
 print(geneA)
 
 
-# In[6]:
+# In[ ]:
 
 
 # checkpoint
 assert(len(gene_ids)==5549)
 
 
-# In[7]:
+# In[ ]:
 
 
 # Randomly select genes for gene set C
@@ -114,35 +114,35 @@ geneSetC = random.sample(gene_ids, geneSetC_size)
 print(len(geneSetC))
 
 
-# In[8]:
+# In[ ]:
 
 
 # checkpoint
 assert(geneA not in geneSetC)
 
 
-# In[9]:
+# In[ ]:
 
 
 # checkpoint
 # print(data[geneA])
 
 
-# In[10]:
+# In[ ]:
 
 
 # checkpoint
 # data.loc[data[geneA]>thresholdA,geneA]
 
 
-# In[11]:
+# In[ ]:
 
 
 # checkpoint: before transformation
 # data.loc[data[geneA]<=thresholdA,geneSetC[0]]
 
 
-# In[12]:
+# In[ ]:
 
 
 # checkpoint
@@ -162,7 +162,7 @@ X = pd.merge(geneA_only, geneC_only, left_index=True, right_index=True)
 sns.regplot(x=geneA, y=geneC, data=X, scatter=True)
 
 
-# In[13]:
+# In[ ]:
 
 
 # Loop through all samples
@@ -180,7 +180,7 @@ for sample_id in data.index:
 data[data>=1.0] = 1.0
 
 
-# In[14]:
+# In[ ]:
 
 
 # checkpoint
@@ -197,14 +197,14 @@ X = pd.merge(geneA_only, geneC_only, left_index=True, right_index=True)
 sns.regplot(x=geneA, y=geneC, data=X, scatter=True)
 
 
-# In[15]:
+# In[ ]:
 
 
 # checkpoint: after transformation
 # data.loc[data[geneA]<=thresholdA,geneSetC[0]]
 
 
-# In[16]:
+# In[ ]:
 
 
 # Dataframe with only gene A
@@ -214,7 +214,7 @@ geneA_only = pd.DataFrame(data[geneA], index=data.index, columns=[geneA])
 data_holdout = data.drop(columns=[geneA])
 
 
-# In[17]:
+# In[ ]:
 
 
 # checkpoint
@@ -222,14 +222,14 @@ data_holdout = data.drop(columns=[geneA])
 geneA_only.hist()
 
 
-# In[18]:
+# In[ ]:
 
 
 # checkpoint
 data_holdout.shape
 
 
-# In[19]:
+# In[ ]:
 
 
 # Create list of base directories
@@ -251,7 +251,7 @@ for each_dir in base_dirs:
         print('creating new directory: {}'.format(analysis_dir))
 
 
-# In[20]:
+# In[ ]:
 
 
 # Output the new gene expression values for each sample
@@ -259,7 +259,7 @@ train_input_file = os.path.join(base_dirs[0], analysis_name, "train_model_input.
 data_holdout.to_csv(train_input_file, sep='\t', compression='xz', float_format="%.5g")
 
 # Output log file with params
-log_file = os.path.join(os.path.dirname(os.getcwd()), 'metadata', analysis_name)
+log_file = os.path.join(os.path.dirname(os.getcwd()), 'metadata', analysis_name,'.txt')
 
 args_dict = {
     "gene A": geneA,
@@ -279,7 +279,7 @@ geneA_file = os.path.join(base_dirs[0], analysis_name, geneA + ".txt")
 geneA_only.to_csv(geneA_file, sep='\t', float_format="%.5g")
 
 
-# In[21]:
+# In[ ]:
 
 
 get_ipython().run_line_magic('time', '')
@@ -296,7 +296,8 @@ epsilon_std = 1.0
 num_PCs = latent_dim
 
 base_dir = os.path.dirname(os.getcwd())
-vae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim, latent_dim, epsilon_std, base_dir, analysis_name)
+vae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
+                        latent_dim, epsilon_std, base_dir, analysis_name)
 pca.pca_model(base_dir, analysis_name, num_PCs)
 
 
