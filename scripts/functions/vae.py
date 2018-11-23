@@ -60,8 +60,7 @@ from keras.models import Model, Sequential
 from keras import metrics, optimizers
 from keras.callbacks import Callback
 
-from functions import helper_ae
-from helper_ae import sampling, CustomVariationalLayer, WarmUpCallback
+from functions.helper_ae import sampling_maker, CustomVariationalLayer, WarmUpCallback
 
 def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
                         latent_dim, epsilon_std, base_dir, analysis_name):
@@ -176,7 +175,7 @@ def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_d
     # Returns the encoded and randomly sampled z vector
     # Takes two keras layers as input to the custom sampling function layer with a
     # latent_dim` output
-    z = Lambda(sampling,
+    z = Lambda(sampling_maker(epsilon_std),
                output_shape=(latent_dim, ))([z_mean_encoded, z_log_var_encoded])
 
     # DECODER
@@ -192,7 +191,7 @@ def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_d
     # CONNECTIONS
     # fully-connected network
     adam = optimizers.Adam(lr=learning_rate)
-    vae_layer = CustomVariationalLayer()([rnaseq_input, rnaseq_reconstruct])
+    vae_layer = CustomVariationalLayer(original_dim, z_log_var_encoded, z_mean_encoded, beta)([rnaseq_input, rnaseq_reconstruct])
     vae = Model(rnaseq_input, vae_layer)
     vae.compile(optimizer=adam, loss=None, loss_weights=[beta])
 

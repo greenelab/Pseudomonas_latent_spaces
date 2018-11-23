@@ -204,7 +204,7 @@ train_input_file = os.path.join(base_dirs[0], analysis_name, "train_model_input.
 data_holdout.to_csv(train_input_file, sep='\t', compression='xz', float_format="%.5g")
 
 # Output log file with params
-log_file = os.path.join(os.path.dirname(os.getcwd()), 'metadata', analysis_name)
+log_file = os.path.join(os.path.dirname(os.getcwd()), 'metadata', analysis_name + '.txt')
 
 args_dict = {
     "gene A": geneA,

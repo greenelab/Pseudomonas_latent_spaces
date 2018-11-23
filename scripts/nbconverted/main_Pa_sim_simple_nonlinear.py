@@ -248,7 +248,7 @@ train_input_file = os.path.join(base_dirs[0], analysis_name, "train_model_input.
 data_holdout.to_csv(train_input_file, sep='\t', compression='xz', float_format="%.5g")
 
 # Output log file with params
-log_file = os.path.join(os.path.dirname(os.getcwd()), 'metadata', analysis_name,'.txt')
+log_file = os.path.join(os.path.dirname(os.getcwd()), 'metadata', analysis_name + '.txt')
 
 args_dict = {
     "gene A": geneA,
@@ -317,5 +317,11 @@ interpolate.interpolate_in_pca_latent_space(data_dir, model_dir, encoded_dir, ta
 
 # Plot prediction per sample along gradient of PA1673 expression
 viz_dir = os.path.join(base_dirs[5], analysis_name)
+plot.plot_corr_gradient(out_dir, viz_dir)
+
+
+# In[1]:
+
+
 plot.plot_corr_gradient(out_dir, viz_dir)
 

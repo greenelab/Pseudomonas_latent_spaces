@@ -41,7 +41,7 @@ randomState = 5
 seed(randomState)
 
 
-# In[ ]:
+# In[2]:
 
 
 # Hyperparameters
@@ -66,14 +66,14 @@ effect_sizeA = 0.5
 analysis_name = 'sim_lin_test'
 
 
-# In[ ]:
+# In[3]:
 
 
 # Load arguments
 data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")
 
 
-# In[ ]:
+# In[4]:
 
 
 # Read in data
@@ -81,7 +81,7 @@ data = pd.read_table(data_file, header=0, sep='\t', index_col=0, compression='zi
 data.head(5)
 
 
-# In[ ]:
+# In[5]:
 
 
 # Randomly select gene A if not specified
@@ -93,14 +93,14 @@ if not geneA:
 print(geneA)
 
 
-# In[ ]:
+# In[6]:
 
 
 # checkpoint
 assert(len(gene_ids)==5549)
 
 
-# In[ ]:
+# In[7]:
 
 
 # Randomly select genes for gene set C
@@ -114,35 +114,35 @@ geneSetC = random.sample(gene_ids, geneSetC_size)
 print(len(geneSetC))
 
 
-# In[ ]:
+# In[8]:
 
 
 # checkpoint
 assert(geneA not in geneSetC)
 
 
-# In[ ]:
+# In[9]:
 
 
 # checkpoint
 # print(data[geneA])
 
 
-# In[ ]:
+# In[10]:
 
 
 # checkpoint
 # data.loc[data[geneA]>thresholdA,geneA]
 
 
-# In[ ]:
+# In[11]:
 
 
 # checkpoint: before transformation
 # data.loc[data[geneA]<=thresholdA,geneSetC[0]]
 
 
-# In[ ]:
+# In[12]:
 
 
 # checkpoint
@@ -162,7 +162,7 @@ X = pd.merge(geneA_only, geneC_only, left_index=True, right_index=True)
 sns.regplot(x=geneA, y=geneC, data=X, scatter=True)
 
 
-# In[ ]:
+# In[13]:
 
 
 # Loop through all samples
@@ -180,7 +180,7 @@ for sample_id in data.index:
 data[data>=1.0] = 1.0
 
 
-# In[ ]:
+# In[14]:
 
 
 # checkpoint
@@ -197,14 +197,14 @@ X = pd.merge(geneA_only, geneC_only, left_index=True, right_index=True)
 sns.regplot(x=geneA, y=geneC, data=X, scatter=True)
 
 
-# In[ ]:
+# In[15]:
 
 
 # checkpoint: after transformation
 # data.loc[data[geneA]<=thresholdA,geneSetC[0]]
 
 
-# In[ ]:
+# In[16]:
 
 
 # Dataframe with only gene A
@@ -214,7 +214,7 @@ geneA_only = pd.DataFrame(data[geneA], index=data.index, columns=[geneA])
 data_holdout = data.drop(columns=[geneA])
 
 
-# In[ ]:
+# In[17]:
 
 
 # checkpoint
@@ -222,14 +222,14 @@ data_holdout = data.drop(columns=[geneA])
 geneA_only.hist()
 
 
-# In[ ]:
+# In[18]:
 
 
 # checkpoint
 data_holdout.shape
 
 
-# In[ ]:
+# In[19]:
 
 
 # Create list of base directories
@@ -251,7 +251,7 @@ for each_dir in base_dirs:
         print('creating new directory: {}'.format(analysis_dir))
 
 
-# In[ ]:
+# In[20]:
 
 
 # Output the new gene expression values for each sample
@@ -259,7 +259,7 @@ train_input_file = os.path.join(base_dirs[0], analysis_name, "train_model_input.
 data_holdout.to_csv(train_input_file, sep='\t', compression='xz', float_format="%.5g")
 
 # Output log file with params
-log_file = os.path.join(os.path.dirname(os.getcwd()), 'metadata', analysis_name,'.txt')
+log_file = os.path.join(os.path.dirname(os.getcwd()), 'metadata', analysis_name + '.txt')
 
 args_dict = {
     "gene A": geneA,
@@ -279,7 +279,7 @@ geneA_file = os.path.join(base_dirs[0], analysis_name, geneA + ".txt")
 geneA_only.to_csv(geneA_file, sep='\t', float_format="%.5g")
 
 
-# In[ ]:
+# In[21]:
 
 
 get_ipython().run_line_magic('time', '')
@@ -328,5 +328,11 @@ interpolate.interpolate_in_pca_latent_space(data_dir, model_dir, encoded_dir, ta
 
 # Plot prediction per sample along gradient of PA1673 expression
 viz_dir = os.path.join(base_dirs[5], analysis_name)
+plot.plot_corr_gradient(out_dir, viz_dir)
+
+
+# In[22]:
+
+
 plot.plot_corr_gradient(out_dir, viz_dir)
 
