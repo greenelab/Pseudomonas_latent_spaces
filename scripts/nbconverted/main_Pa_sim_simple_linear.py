@@ -330,9 +330,3 @@ interpolate.interpolate_in_pca_latent_space(data_dir, model_dir, encoded_dir, ta
 viz_dir = os.path.join(base_dirs[5], analysis_name)
 plot.plot_corr_gradient(out_dir, viz_dir)
 
-
-# In[22]:
-
-
-plot.plot_corr_gradient(out_dir, viz_dir)
-

@@ -73,10 +73,10 @@ def plot_corr_gradient(out_dir, viz_dir):
     # Plot correlation of gene space vs latent space
     fg=sns.jointplot(x='gene_space', y='latent_space_vae', data=X, kind='hex');
     fg.set_axis_labels('Gene space correlation', 'Latent space VAE correlation')
-    fg.set_title('Gene space vs Latent VAE space')
+    #fg.set_title('Gene space vs Latent VAE space')
     fg.savefig(fig2_file)
     
     #fg=sns.jointplot(x='gene_space', y='latent_space_pca', data=X, kind='hex');
     fg.set_axis_labels('Gene space correlation', 'Latent space PCA correlation')
-    fg.set_title('Gene space vs Latent PCA space')
+    #fg.set_title('Gene space vs Latent PCA space')
     fg.savefig(fig3_file)

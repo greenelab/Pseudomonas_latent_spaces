@@ -59,7 +59,7 @@ thresholdA = 0.5
 effect_sizeA = 0.5
 
 # Name of analysis
-analysis_name = 'sim_nonlin_5'
+analysis_name = 'sim_nonlin_test'
 
 
 # In[3]:
@@ -317,11 +317,5 @@ interpolate.interpolate_in_pca_latent_space(data_dir, model_dir, encoded_dir, ta
 
 # Plot prediction per sample along gradient of PA1673 expression
 viz_dir = os.path.join(base_dirs[5], analysis_name)
-plot.plot_corr_gradient(out_dir, viz_dir)
-
-
-# In[1]:
-
-
 plot.plot_corr_gradient(out_dir, viz_dir)
 
