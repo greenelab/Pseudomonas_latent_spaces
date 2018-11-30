@@ -3,8 +3,8 @@
 # (updated October 2018) 
 #
 # Define offset vectors
-# An offset vector represents the difference in gene expression profiles between two states (ex. two different conditions like # disease vs normal)
-# 
+# An offset vector represents the difference in gene expression profiles between two states (ex. two different conditions like 
+# disease vs normal)
 #-------------------------------------------------------------------------------------------------------------------------------
 import os
 import pandas as pd

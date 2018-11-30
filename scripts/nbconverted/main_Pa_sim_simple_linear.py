@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[30]:
 
 
 #-----------------------------------------------------------------------------------------------------------------
@@ -279,7 +279,7 @@ geneA_file = os.path.join(base_dirs[0], analysis_name, geneA + ".txt")
 geneA_only.to_csv(geneA_file, sep='\t', float_format="%.5g")
 
 
-# In[21]:
+# In[31]:
 
 
 get_ipython().run_line_magic('time', '')
@@ -325,8 +325,11 @@ interpolate.interpolate_in_gene_space(data_dir, target_gene, out_dir, percent_lo
 interpolate.interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, target_gene, out_dir, percent_low, percent_high)
 interpolate.interpolate_in_pca_latent_space(data_dir, model_dir, encoded_dir, target_gene, out_dir, percent_low, percent_high)
 
+# True if the x-axis of the plot uses the sample index
+# False if the x-asix of the plot uses the gene expression of the target gene
+by_sample_ind = False
 
 # Plot prediction per sample along gradient of PA1673 expression
 viz_dir = os.path.join(base_dirs[5], analysis_name)
-plot.plot_corr_gradient(out_dir, viz_dir)
+plot.plot_corr_gradient(out_dir, viz_dir, geneA, by_sample_ind)
 

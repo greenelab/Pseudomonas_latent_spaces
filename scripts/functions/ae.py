@@ -1,20 +1,17 @@
 # -----------------------------------------------------------------------------------------------------------------------
-# By Alexandra Lee 
-# (updated October 2018) 
+# By Alexandra Lee
+# (updated October 2018)
 #
-# Encode gene expression data into low dimensional latent space using 
+# Encode gene expression data into low dimensional latent space using
 # regular autoencoder (AE)
 # --------------------------------------------------------------------------------------------------------------------
 import os
-import argparse
 import pandas as pd
-import matplotlib.pyplot as plt
 import tensorflow as tf
 
 # To ensure reproducibility using Keras during development
 # https://keras.io/getting-started/faq/#how-can-i-obtain-reproducible-results-using-keras-during-development
 import numpy as np
-import tensorflow as tf
 import random as rn
 
 # The below is necessary in Python 3.2.3 onwards to
@@ -39,9 +36,11 @@ rn.seed(12345)
 # Force TensorFlow to use single thread.
 # Multiple threads are a potential source of
 # non-reproducible results.
-# For further details, see: https://stackoverflow.com/questions/42022950/which-seeds-have-to-be-set-where-to-realize-100-reproducibility-of-training-res
+# For further details, see: https://stackoverflow.com/questions/42022950/
+# which-seeds-have-to-be-set-where-to-realize-100-reproducibility-of-training-res
 
-session_conf = tf.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1)
+session_conf = tf.ConfigProto(
+    intra_op_parallelism_threads=1, inter_op_parallelism_threads=1)
 
 from keras import backend as K
 
@@ -63,25 +62,27 @@ from keras.callbacks import Callback
 
 from helper_ae import sampling, CustomVariationalLayer, WarmUpCallback
 
+
 def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
                     latent_dim, epsilon_std, base_dir, analysis_name):
     """
     Train 2-layer Tybalt model using input dataset
-    
+
     Output:
      Encoding and decoding neural networks to use in downstream analysis
     """
-    
+
     # --------------------------------------------------------------------------------------------------------------------
     # Files
     # --------------------------------------------------------------------------------------------------------------------
-    data_file =  os.path.join(base_dir, "data", analysis_name, "train_model_input.txt.xz")
+    data_file = os.path.join(
+        base_dir, "data", analysis_name, "train_model_input.txt.xz")
     rnaseq = pd.read_table(data_file, index_col=0, header=0, compression='xz')
 
     # --------------------------------------------------------------------------------------------------------------------
     # Initialize hyper parameters
     #
-    # learning rate: 
+    # learning rate:
     # batch size: Total number of training examples present in a single batch
     #             Iterations is the number of batches needed to complete one epoch
     # epochs: One Epoch is when an ENTIRE dataset is passed forward and backward through the neural network only ONCE
@@ -89,27 +90,29 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
     # original dim: dimensions of the raw data
     # latent dim: dimensiosn of the latent space (fixed by the user)
     #   Note: intrinsic latent space dimension unknown
-    # epsilon std: 
+    # epsilon std:
     # beta: Threshold value for ReLU?
     # --------------------------------------------------------------------------------------------------------------------
 
     original_dim = rnaseq.shape[1]
     beta = K.variable(0)
 
-    stat_file =  os.path.join(base_dir, "stats", analysis_name, "ae_2layer_{}latent_stats.tsv".format(latent_dim))
-    hist_plot_file =os.path.join(base_dir, "stats", analysis_name, "ae_2layer_{}latent_hist.png".format(latent_dim))
+    stat_file = os.path.join(base_dir, "stats", analysis_name,
+                             "ae_2layer_{}latent_stats.tsv".format(latent_dim))
+    hist_plot_file = os.path.join(
+        base_dir, "stats", analysis_name, "ae_2layer_{}latent_hist.png".format(latent_dim))
 
-    encoded_file =os.path.join(base_dir, "encoded", analysis_name, 
-                               "ae_train_input_2layer_{}latent_encoded.txt".format(latent_dim))
+    encoded_file = os.path.join(base_dir, "encoded", analysis_name,
+                                "ae_train_input_2layer_{}latent_encoded.txt".format(latent_dim))
 
-    model_encoder_file =os.path.join(base_dir, "models", analysis_name, 
-                                     "ae_2layer_{}latent_encoder_model.h5".format(latent_dim))
-    weights_encoder_file =os.path.join(base_dir, "models", analysis_name, 
-                                       "ae_2layer_{}latent_encoder_weights.h5".format(latent_dim))
-    model_decoder_file =os.path.join(base_dir, "models", analysis_name, 
-                                     "ae_2layer_{}latent_decoder_model.h5".format(latent_dim))
-    weights_decoder_file =os.path.join(base_dir, "models", analysis_name,
-                                       "ae_2layer_{}latent_decoder_weights.h5".format(latent_dim))
+    model_encoder_file = os.path.join(base_dir, "models", analysis_name,
+                                      "ae_2layer_{}latent_encoder_model.h5".format(latent_dim))
+    weights_encoder_file = os.path.join(base_dir, "models", analysis_name,
+                                        "ae_2layer_{}latent_encoder_weights.h5".format(latent_dim))
+    model_decoder_file = os.path.join(base_dir, "models", analysis_name,
+                                      "ae_2layer_{}latent_decoder_model.h5".format(latent_dim))
+    weights_decoder_file = os.path.join(base_dir, "models", analysis_name,
+                                        "ae_2layer_{}latent_decoder_weights.h5".format(latent_dim))
 
     # --------------------------------------------------------------------------------------------------------------------
     # Data initalizations
@@ -117,7 +120,8 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
 
     # Split 10% test set randomly
     test_set_percent = 0.1
-    rnaseq_test_df = rnaseq.sample(frac=test_set_percent, random_state = randomState)
+    rnaseq_test_df = rnaseq.sample(
+        frac=test_set_percent, random_state=randomState)
     rnaseq_train_df = rnaseq.drop(rnaseq_test_df.index)
 
     # Create a placeholder for an encoded (original-dimensional)
@@ -145,7 +149,8 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
     #   ReLU function filters noise
 
     # X is encoded using Q(z|X) to yield mu(X), sigma(X) that describes latent space distribution
-    hidden_dense_linear = Dense(intermediate_dim, kernel_initializer='glorot_uniform')(rnaseq_input)
+    hidden_dense_linear = Dense(
+        intermediate_dim, kernel_initializer='glorot_uniform')(rnaseq_input)
     hidden_dense_batchnorm = BatchNormalization()(hidden_dense_linear)
     hidden_encoded = Activation('relu')(hidden_dense_batchnorm)
 
@@ -153,11 +158,13 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
     # Normalize and relu filter at each layer adds non-linear component (relu is non-linear function)
     # If architecture is layer-layer-normalization-relu then the computation is still linear
     # Add additional layers in triplicate
-    z_mean_dense_linear = Dense(latent_dim, kernel_initializer='glorot_uniform')(hidden_encoded)
+    z_mean_dense_linear = Dense(
+        latent_dim, kernel_initializer='glorot_uniform')(hidden_encoded)
     z_mean_dense_batchnorm = BatchNormalization()(z_mean_dense_linear)
     z_mean_encoded = Activation('relu')(z_mean_dense_batchnorm)
 
-    z_log_var_dense_linear = Dense(latent_dim, kernel_initializer='glorot_uniform')(rnaseq_input)
+    z_log_var_dense_linear = Dense(
+        latent_dim, kernel_initializer='glorot_uniform')(rnaseq_input)
     z_log_var_dense_batchnorm = BatchNormalization()(z_log_var_dense_linear)
     z_log_var_encoded = Activation('relu')(z_log_var_dense_batchnorm)
 
@@ -170,7 +177,7 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
     # randomly sample similar points z from the latent normal distribution that is assumed to generate the data,
     # via z = z_mean + exp(z_log_sigma) * epsilon, where epsilon is a random normal tensor
     # z ~ Q(z|X)
-    # Note: there is a trick to reparameterize to standard normal distribution so that the space is differentiable and 
+    # Note: there is a trick to reparameterize to standard normal distribution so that the space is differentiable and
     # therefore gradient descent can be used
     #
     # Returns the encoded and randomly sampled z vector
@@ -179,17 +186,16 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
     z = Lambda(sampling,
                output_shape=(latent_dim, ))([z_mean_encoded, z_log_var_encoded])
 
-
     # DECODER
 
     # The decoding layer is much simpler with a single layer glorot uniform
     # initialized and sigmoid activation
     # Reconstruct P(X|z)
     decoder_model = Sequential()
-    decoder_model.add(Dense(intermediate_dim, activation='relu', input_dim=latent_dim))
+    decoder_model.add(
+        Dense(intermediate_dim, activation='relu', input_dim=latent_dim))
     decoder_model.add(Dense(original_dim, activation='sigmoid'))
     rnaseq_reconstruct = decoder_model(z)
-
 
     # CONNECTIONS
     # fully-connected network
@@ -204,7 +210,8 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
 
     # fit Model
     # hist: record of the training loss at each epoch
-    hist = vae.fit(np.array(rnaseq_train_df), shuffle=True, epochs=epochs, batch_size=batch_size,
+    hist = vae.fit(np.array(rnaseq_train_df), shuffle=True,
+                   epochs=epochs, batch_size=batch_size,
                    validation_data=(np.array(rnaseq_test_df), None),
                    callbacks=[WarmUpCallback(beta, kappa)])
 
@@ -228,7 +235,7 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
     ax.set_ylabel('VAE Loss')
     fig = ax.get_figure()
     fig.savefig(hist_plot_file)
-    
+
     del ax, fig
 
     # --------------------------------------------------------------------------------------------------------------------
@@ -256,7 +263,8 @@ def ae_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,
 
     # Save decoder model
     # (source) https://github.com/greenelab/tybalt/blob/master/scripts/nbconverted/tybalt_vae.py
-    decoder_input = Input(shape=(latent_dim, ))  # can generate from any sampled z vector
+    # can generate from any sampled z vector
+    decoder_input = Input(shape=(latent_dim, ))
     _x_decoded_mean = decoder_model(decoder_input)
     decoder = Model(decoder_input, _x_decoded_mean)
 

@@ -1,10 +1,10 @@
 #-------------------------------------------------------------------------------------------------------------------------------
-# By Alexandra Lee 
-# (updated October 2018) 
+# By Alexandra Lee
+# (updated October 2018)
 #
 # Generate input files for each analysis
-# 
-# Each analysis has its own specific dataset and pre-processing steps that are applied and specified within its 
+#
+# Each analysis has its own specific dataset and pre-processing steps that are applied and specified within its
 # specific function
 #-------------------------------------------------------------------------------------------------------------------------------
 import os
@@ -15,14 +15,14 @@ randomState = 123
 from numpy.random import seed
 seed(randomState)
 
+
 def generate_input_PA1673_gradient(base_dir):
-    
     """
     generate_input_PA1673_gradient(base_dir: string):
-        
+
     input:
         base_dir: directory containing the raw gene expression data
-        
+
         data collected from the Pseudomonas aeruginosa gene expression from compendium 
         referenced in https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5069748/
 
@@ -30,14 +30,15 @@ def generate_input_PA1673_gradient(base_dir):
 
     processing:
      1. Remove PA1673 gene that will be used as the "condition" (phenotype) for this analysis
-     
+
     output:  
      dataframe (1191 samples x 5548 genes)
-     
+
     """
-    
+
     # Load arguments
-    data_file = os.path.join(os.path.dirname(os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")
+    data_file = os.path.join(os.path.dirname(
+        os.getcwd()), "data", "all-pseudomonas-gene-normalized.zip")
     gene_id = "PA1673"
 
     # Output
@@ -56,5 +57,6 @@ def generate_input_PA1673_gradient(base_dir):
     input_holdout = X.drop(columns=[gene_id])
 
     # Output
-    input_holdout.to_csv(train_input_file, sep='\t', compression='xz', float_format="%.5g")
+    input_holdout.to_csv(train_input_file, sep='\t',
+                         compression='xz', float_format="%.5g")
     PA1673_only.to_csv(PA1673_file, sep='\t', float_format="%.5g")

@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------
-# Helper functions for running autoencoder 
+# Helper functions for running autoencoder
 #----------------------------------------------------------------------------------------------------------------
 
 import os
@@ -11,7 +11,6 @@ import tensorflow as tf
 # To ensure reproducibility using Keras during development
 # https://keras.io/getting-started/faq/#how-can-i-obtain-reproducible-results-using-keras-during-development
 import numpy as np
-import tensorflow as tf
 import random as rn
 
 # The below is necessary in Python 3.2.3 onwards to
@@ -38,7 +37,8 @@ rn.seed(12345)
 # non-reproducible results.
 # For further details, see: https://stackoverflow.com/questions/42022950/which-seeds-have-to-be-set-where-to-realize-100-reproducibility-of-training-res
 
-session_conf = tf.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1)
+session_conf = tf.ConfigProto(
+    intra_op_parallelism_threads=1, inter_op_parallelism_threads=1)
 
 from keras import backend as K
 
@@ -60,19 +60,21 @@ from keras.callbacks import Callback
 # --------------------------------------------------------------------------------------------------------------------
 # Functions
 #
-# Based on publication by Greg et. al. 
+# Based on publication by Greg et. al.
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5728678/
 # https://github.com/greenelab/tybalt/blob/master/scripts/vae_pancancer.py
 # --------------------------------------------------------------------------------------------------------------------
 
 # Function for reparameterization trick to make model differentiable
+
+
 def sampling_maker(epsilon_std):
     def sampling(args):
         # Function with args required for Keras Lambda function
         z_mean, z_log_var = args
 
         # Draw epsilon of the same shape from a standard normal distribution
-        epsilon = K.random_normal(shape=tf.shape(z_mean), mean=0., 
+        epsilon = K.random_normal(shape=tf.shape(z_mean), mean=0.,
                                   stddev=epsilon_std)
 
         # The latent vector is non-deterministic and differentiable
@@ -81,25 +83,29 @@ def sampling_maker(epsilon_std):
         return z
     return sampling
 
+
 class CustomVariationalLayer(Layer):
     """
     Define a custom layer that learns and performs the training
     """
-    def __init__(self, original_dim, z_log_var_encoded, z_mean_encoded, beta, **kwargs):
+
+    def __init__(self, original_dim, z_log_var_encoded,
+                 z_mean_encoded, beta, **kwargs):
         # https://keras.io/layers/writing-your-own-keras-layers/
         self.is_placeholder = True
         self.original_dim = original_dim
         self.z_log_var_encoded = z_log_var_encoded
         self.z_mean_encoded = z_mean_encoded
         self.beta = beta
-        
+
         super(CustomVariationalLayer, self).__init__(**kwargs)
 
     def vae_loss(self, x_input, x_decoded):
-        reconstruction_loss = self.original_dim * metrics.binary_crossentropy(x_input, x_decoded)
+        reconstruction_loss = self.original_dim * \
+            metrics.binary_crossentropy(x_input, x_decoded)
         kl_loss = - 0.5 * K.sum(1 + self.z_log_var_encoded -
-                                    K.square(self.z_mean_encoded) -
-                                    K.exp(self.z_log_var_encoded), axis=-1)
+                                K.square(self.z_mean_encoded) -
+                                K.exp(self.z_log_var_encoded), axis=-1)
         return K.mean(reconstruction_loss + (K.get_value(self.beta) * kl_loss))
 
     def call(self, inputs):
@@ -109,6 +115,7 @@ class CustomVariationalLayer(Layer):
         self.add_loss(loss, inputs=inputs)
         # We won't actually use the output.
         return x
+
 
 class WarmUpCallback(Callback):
     def __init__(self, beta, kappa):
