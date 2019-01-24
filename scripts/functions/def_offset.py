@@ -40,8 +40,8 @@ def gene_space_offset(data_dir, gene_id, percent_low, percent_high):
         percent_high: integer between 0 and 1
         
     computation:
-        offset_vector = average(gene expression of samples that have the highest 5% of target gene expression) -  
-          average(gene expression of samples that have the lowest 5% of target gene expression) 
+        offset_vector = average(gene expression of samples that have the highest percent_high% of target gene expression) -  
+          average(gene expression of samples that have the lowest percent_low% of target gene expression) 
     
     output:
      offset vector (1 x 5548 genes)     
@@ -113,8 +113,8 @@ def vae_latent_space_offset(data_dir, model_dir, encoded_dir, latent_dim, gene_i
         percent_high: integer between 0 and 1
     
     computation:
-        offset_vector = average(encoded gene expression of samples that have the highest 5% of target gene expression) -  
-          average(encoded gene expression of samples that have the lowest 5% of target gene expression) 
+        offset_vector = average(encoded gene expression of samples that have the highest percent_high% of target gene expression) -  
+          average(encoded gene expression of samples that have the lowest percent_low% of target gene expression) 
     
     output:
         encoded offset vector (1 x number of latent space features)     
@@ -200,8 +200,8 @@ def pca_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_l
         percent_high: integer between 0 and 1
     
     computation:
-        offset_vector = average(encoded gene expression of samples that have the highest 5% of target gene expression) -  
-          average(encoded gene expression of samples that have the lowest 5% of target gene expression) 
+        offset_vector = average(encoded gene expression of samples that have the highest percent_high% of target gene expression) -  
+          average(encoded gene expression of samples that have the lowest percent_low% of target gene expression) 
     
     output:
         encoded offset vector (1 x number of latent space features)     

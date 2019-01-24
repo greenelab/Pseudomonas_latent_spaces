@@ -252,6 +252,8 @@ model_dir = os.path.join(base_dirs[2], analysis_name)
 encoded_dir = os.path.join(base_dirs[1], analysis_name)
 
 # Define offset vectors for VAE latent space
+# The offset vector represents the "essence" of gene A
+# The offset vector = highest percent_high gene expression - lowest percent_low gene expression  
 def_offset.vae_latent_space_offset(data_dir, model_dir, encoded_dir, latent_dim, target_gene, percent_low,
                                    percent_high)
 # Define offset vectors for PCA latent space
@@ -259,6 +261,8 @@ def_offset.pca_latent_space_offset(data_dir, model_dir, encoded_dir, target_gene
 
 
 # Predict gene expression using offset in gene space and latent space
+# Predict sample gene expression = baseline low gene expression + scale factor * offset vector
+# interpolate.py returns correlation between predicted expression and actual expression
 out_dir = os.path.join(base_dirs[3], analysis_name)
 
 interpolate.interpolate_in_gene_space(data_dir, target_gene, out_dir, percent_low, percent_high)
@@ -277,7 +281,7 @@ interpolate.interpolate_in_pca_latent_space(data_dir, model_dir, encoded_dir, ta
 # False if the x-asix of the plot uses the gene expression of the target gene
 by_sample_ind = False
 
-# Plot prediction per sample along gradient of gene A expression
+# Plot correlation score per sample along gradient of gene A expression
 viz_dir = os.path.join(base_dirs[5], analysis_name)
 plot.plot_corr_gradient(out_dir, viz_dir, target_gene, by_sample_ind)
 
