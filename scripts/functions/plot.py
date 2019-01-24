@@ -34,9 +34,9 @@ def plot_corr_gradient(out_dir, viz_dir, target_gene, by_sample_ind):
     sorted_target_gene_file = os.path.join(out_dir, "sorted_id.txt")
 
     # output
-    fig1_file = os.path.join(viz_dir, "smooth_redo.png")
-    fig2_file = os.path.join(viz_dir, "corr_gene_vs_vae_redo.png")
-    fig3_file = os.path.join(viz_dir, "corr_gene_vs_pca_redo.png")
+    fig1_file = os.path.join(viz_dir, "smooth.png")
+    fig2_file = os.path.join(viz_dir, "corr_gene_vs_vae.png")
+    fig3_file = os.path.join(viz_dir, "corr_gene_vs_pca.png")
 
     # read in data
     gene_corr_data = pd.read_table(
@@ -103,7 +103,8 @@ def plot_corr_gradient(out_dir, viz_dir, target_gene, by_sample_ind):
         ax.set_ylim(0.0, 1.0)
 
     handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles[2:5], ['Gene space correlation', 'Latent space VAE correlation', 'Latent space PCA correlation'],
+    ax.legend(handles#[2:5]
+              , ['Gene space correlation', 'Latent space VAE correlation', 'Latent space PCA correlation'],
               loc='best', borderaxespad=0.)
     ax.set_title('Interpolation across {} gradient'.format(target_gene))
 

@@ -1,2 +1,6 @@
 *.xz filter=lfs diff=lfs merge=lfs -text
 data/train_model_input_anr.txt.xz filter=lfs diff=lfs merge=lfs -text
+models/sim_AB_2775_300_v2/tybalt_2layer_300latent_decoder_model.h5 filter=lfs diff=lfs merge=lfs -text
+models/sim_AB_2775_300_v2/tybalt_2layer_300latent_decoder_weights.h5 filter=lfs diff=lfs merge=lfs -text
+models/sim_AB_2775_300_v2/tybalt_2layer_300latent_encoder_model.h5 filter=lfs diff=lfs merge=lfs -text
+models/sim_AB_2775_300_v2/tybalt_2layer_300latent_encoder_weights.h5 filter=lfs diff=lfs merge=lfs -text

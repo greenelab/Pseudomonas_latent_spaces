@@ -109,7 +109,8 @@ def interpolate_in_gene_space(data_dir, gene_id, out_dir,
     target_gene_sorted.to_csv(sorted_file, sep='\t', float_format="%.5g")
 
 
-def interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, gene_id, out_dir,
+def interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, latent_dim, 
+                                    gene_id, out_dir,
                                     percent_low, percent_high):
     """
     interpolate_in_vae_latent_space(data_dir: string, gene_id: string, out_dir: string):
@@ -157,13 +158,13 @@ def interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, gene_id, o
     offset_file = os.path.join(encoded_dir, "offset_latent_space_vae.txt")
 
     model_file = os.path.join(
-        model_dir, "tybalt_2layer_10latent_encoder_model.h5")
+        model_dir, "tybalt_2layer_{}latent_encoder_model.h5".format(latent_dim))
     weights_file = os.path.join(
-        model_dir, "tybalt_2layer_10latent_encoder_weights.h5")
+        model_dir, "tybalt_2layer_{}latent_encoder_weights.h5".format(latent_dim))
     model_decode_file = os.path.join(
-        model_dir, "tybalt_2layer_10latent_decoder_model.h5")
+        model_dir, "tybalt_2layer_{}latent_decoder_model.h5".format(latent_dim))
     weights_decode_file = os.path.join(
-        model_dir, "tybalt_2layer_10latent_decoder_weights.h5")
+        model_dir, "tybalt_2layer_{}latent_decoder_weights.h5".format(latent_dim))
 
     # Output files
     corr_file = os.path.join(out_dir, "corr_latent_space_vae.txt")

@@ -40,8 +40,8 @@ def gene_space_offset(data_dir, gene_id, percent_low, percent_high):
         percent_high: integer between 0 and 1
         
     computation:
-        offset_vector = average(gene expression of samples that have the highest 5% of target gene expression) -  
-          average(gene expression of samples that have the lowest 5% of target gene expression) 
+        offset_vector = average(gene expression of samples that have the highest percent_high% of target gene expression) -  
+          average(gene expression of samples that have the lowest percent_low% of target gene expression) 
     
     output:
      offset vector (1 x 5548 genes)     
@@ -89,7 +89,7 @@ def gene_space_offset(data_dir, gene_id, percent_low, percent_high):
     offset_gene_space_df.to_csv(offset_file, sep='\t', float_format="%.5g")
     
 
-def vae_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_low, percent_high):
+def vae_latent_space_offset(data_dir, model_dir, encoded_dir, latent_dim, gene_id, percent_low, percent_high):
     
     """
     vae_latent_space_offset(data_dir: string, model_dir: string, encoded_dir: string, gene_id: string):
@@ -113,8 +113,8 @@ def vae_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_l
         percent_high: integer between 0 and 1
     
     computation:
-        offset_vector = average(encoded gene expression of samples that have the highest 5% of target gene expression) -  
-          average(encoded gene expression of samples that have the lowest 5% of target gene expression) 
+        offset_vector = average(encoded gene expression of samples that have the highest percent_high% of target gene expression) -  
+          average(encoded gene expression of samples that have the lowest percent_low% of target gene expression) 
     
     output:
         encoded offset vector (1 x number of latent space features)     
@@ -125,8 +125,8 @@ def vae_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_l
     target_gene_file = os.path.join(data_dir, gene_id + ".txt")
     non_target_gene_file = os.path.join(data_dir, "train_model_input.txt.xz")
 
-    model_file = os.path.join(model_dir, "tybalt_2layer_10latent_encoder_model.h5")
-    weights_file = os.path.join(model_dir, "tybalt_2layer_10latent_encoder_weights.h5")
+    model_file = os.path.join(model_dir, "tybalt_2layer_{}latent_encoder_model.h5".format(latent_dim))
+    weights_file = os.path.join(model_dir, "tybalt_2layer_{}latent_encoder_weights.h5".format(latent_dim))
 
     # Output files
     offset_file = os.path.join(encoded_dir, "offset_latent_space_vae.txt")
@@ -200,8 +200,8 @@ def pca_latent_space_offset(data_dir, model_dir, encoded_dir, gene_id, percent_l
         percent_high: integer between 0 and 1
     
     computation:
-        offset_vector = average(encoded gene expression of samples that have the highest 5% of target gene expression) -  
-          average(encoded gene expression of samples that have the lowest 5% of target gene expression) 
+        offset_vector = average(encoded gene expression of samples that have the highest percent_high% of target gene expression) -  
+          average(encoded gene expression of samples that have the lowest percent_low% of target gene expression) 
     
     output:
         encoded offset vector (1 x number of latent space features)     
