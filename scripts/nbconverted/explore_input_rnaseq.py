@@ -60,7 +60,7 @@ data_sorted = data.sort_values(by=[gene_id])
 data_sorted.head()
 
 
-# In[ ]:
+# In[6]:
 
 
 # For each gene plot gene expression trend along PA1673 gradient
@@ -70,7 +70,7 @@ data_corr = data_sorted.corr(method='pearson')
 data_corr.head()
 
 
-# In[ ]:
+# In[7]:
 
 
 # Plot distribution of correlation scores
@@ -78,70 +78,8 @@ data_corr_PA1673 = data_corr[gene_id]
 sns.distplot(data_corr_PA1673)
 
 
-# In[ ]:
+# In[8]:
 
 
-# %%time
-# # Plot the expression of genes along the PA1673 gradient:
-# # Are the genes changing linearly with respect to PA1673?
-
-# # Sort samples by PA1673 expression (lowest --> highest)
-# data_sorted = data.sort_values(by=[gene_id])
-# data_sorted.head()
-
-# # For each gene plot gene expression trend along PA1673 gradient
-
-# # Initialize the figure
-# plt.style.use('seaborn-darkgrid')
- 
-# # create a color palette
-# palette = plt.get_cmap('Set1')
- 
-# # multiple line plot
-# num_samples = data_sorted.shape[0]
-# num_panels = 100
-
-# for panel in range(num_samples%num_panels):
-#     rows = mt.sqrt(num_panels)
-#     cols = rows
-#     num=0
-    
-#     # Not incrementing correctly here
-#     data_subsample = data_sorted.drop(gene_id, axis=1).iloc[:,panel:num_panels]
-    
-#     for column in data_subsample:
-#         num+=1
-
-#         # Find the right spot on the plot
-#         plt.subplot(rows,cols, num)
-
-#         # Plot the lineplot
-#         plt.plot(data_sorted[gene_id], data_subsample[column], marker='', color=palette(num), linewidth=1.9, alpha=0.9, label=column)
-
-#         # Same limits for everybody!
-#         plt.xlim(0,1)
-#         plt.ylim(0,1)
-
-#         # Not ticks everywhere
-#         #if num in range(7) :
-#         #    plt.tick_params(labelbottom='off')
-#         #if num not in [1,4,7] :
-#         #    plt.tick_params(labelleft='off')
-
-#         # Add title
-#         plt.title(column, loc='left', fontsize=12, fontweight=0, color=palette(num) )
-
-#     # general title
-#     plt.suptitle("How gene expression changed\nalong PA1673 gradient?", fontsize=13, fontweight=0, color='black', style='italic', y=1.02)
-
-#     # Axis title
-#     plt.text(0.5, 0.02, 'PA1673 expression', ha='center', va='center')
-#     plt.text(0.06, 0.5, 'Gene i expression', ha='center', va='center', rotation='vertical')
-    
-#     # Save each panel as a figure
-#     base_dir = os.path.join(os.path.dirname(os.getcwd()), 'VAE', 'output')
-#     file_out = PdfPages(os.path.join(base_dir, 'Panel_{}.pdf'.format(panel)))
-#     plt.savefig(file_out, format='pdf', bbox_inches = 'tight')
-#     plt.show()
-#     file_out.close()
+get_ipython().run_cell_magic('time', '', 'from statsmodels.nonparametric.smoothers_lowess import lowess\n## 4.  Plot the expression of genes along the PA1673 gradient:\n# Are the genes changing linearly with respect to PA1673?\n\n# Sort samples by PA1673 expression (lowest --> highest)\ndata_sorted = data.sort_values(by=[gene_id])\ndata_sorted.head()\n\n# For each gene plot gene expression trend along PA1673 gradient\n\n# Initialize the figure\nplt.style.use(\'seaborn-darkgrid\')\n \n# create a color palette\npalette = plt.get_cmap(\'Set1\')\n \n# multiple line plot\nnum_genes = data_sorted.shape[1]\nnum_panels = 100\n\n# Output file directory\nbase_dir = os.path.join(os.path.dirname(os.getcwd()), "exploration_results", "real_data")\nos.makedirs(base_dir, exist_ok=True)\n    \nfor panel in range(mt.ceil(num_genes%num_panels)):\n    rows = mt.sqrt(num_panels)\n    cols = rows\n    num=0\n    \n    # Not incrementing correctly here\n    data_subsample = data_sorted.drop(gene_id, axis=1).iloc[: , (panel*num_panels):((panel+1)*num_panels)-1]\n    \n    for column in data_subsample:\n        num+=1\n\n        # Find the right spot on the plot\n        plt.subplot(rows,cols, num)\n\n        # Plot the lineplot --Add smoothing to see trend\n        y_smooth = lowess(data_sorted[gene_id], data_subsample[column])[:,1]\n        plt.plot(data_sorted[gene_id], y_smooth, marker=\'\', color=palette(num), linewidth=1.9, alpha=0.9, label=column)\n               \n        # Same limits for everybody!\n        plt.xlim(0,1)\n        plt.ylim(0,1)\n\n        plt.tick_params(labelbottom=\'off\')\n        plt.tick_params(labelleft=\'off\')\n        # Not ticks everywhere\n        #if num in range(7) :\n        #    plt.tick_params(labelbottom=\'off\')\n        #if num not in [1,4,7] :\n        #    plt.tick_params(labelleft=\'off\')\n\n        # Add title\n        plt.title(column, loc=\'left\', fontsize=5, fontweight=0, color=palette(num) )\n\n    # general title\n    plt.suptitle("How gene expression changed\\nalong gene {} gradient?".format(gene_id), fontsize=13, fontweight=0, color=\'black\', style=\'italic\', y=1.02)\n\n    # Axis title\n    plt.text(0.5, 0.02, \'Gene {} expression\'.format(gene_id), ha=\'center\', va=\'center\')\n    plt.text(0.06, 0.5, \'Gene i expression\', ha=\'center\', va=\'center\', rotation=\'vertical\')\n    \n    # Save each panel as a figure\n    file_out = PdfPages(os.path.join(base_dir, \'Panel_{}.pdf\'.format(panel)))\n    plt.savefig(file_out, format=\'pdf\', bbox_inches = \'tight\')\n    plt.show()\n    file_out.close()')
 
