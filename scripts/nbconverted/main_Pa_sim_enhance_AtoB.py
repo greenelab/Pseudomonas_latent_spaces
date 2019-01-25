@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[17]:
+# In[1]:
 
 
 #-----------------------------------------------------------------------------------------------------------------
@@ -134,6 +134,21 @@ assert(len(set(geneSetA).intersection(set(geneSetB))) == 0)
 # In[10]:
 
 
+## Output gene groupings
+geneSetA_df = pd.DataFrame(geneSetA)
+geneSetB_df = pd.DataFrame(geneSetB)
+
+geneSetA_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "geneSetA.txt")
+geneSetB_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "geneSetB.txt")
+
+
+geneSetA_df.to_csv(geneSetA_file, sep='\t')
+geneSetB_df.to_csv(geneSetB_file, sep='\t')
+
+
+# In[11]:
+
+
 ## Add signal to the data
 
 # Algorithm:
@@ -169,16 +184,16 @@ for sample_id in data.index:
 data[data>=1.0] = 1.0
 
 
-# In[11]:
+# In[12]:
 
 
-# Dataframe with only genes in set A
+# Dataframe with only gene A expression
 geneA_only = pd.DataFrame(data[geneSetA_pick], index=data.index, columns=[geneSetA_pick])
 
 geneA_only.head()
 
 
-# In[12]:
+# In[13]:
 
 
 # Create list of base directories
@@ -201,7 +216,7 @@ for each_dir in base_dirs:
     os.makedirs(analysis_dir, exist_ok=True)
 
 
-# In[13]:
+# In[14]:
 
 
 # Output the new gene expression values for each sample
@@ -228,13 +243,13 @@ geneA_file = os.path.join(base_dirs[0], analysis_name, geneSetA_pick + ".txt")
 geneA_only.to_csv(geneA_file, sep='\t', float_format="%.5g")
 
 
-# In[14]:
+# In[15]:
 
 
 get_ipython().run_cell_magic('time', '', '## Train compression methods using simulated data\n\n# Parameters to train nonlinear (VAE) compression method\nlearning_rate = 0.001\nbatch_size = 100\nepochs = 200\nkappa = 0.01\nintermediate_dim = 2775\nlatent_dim = 300\nepsilon_std = 1.0\nnum_PCs = latent_dim\n\nbase_dir = os.path.dirname(os.getcwd())\n\n# Train nonlinear (VAE)\nvae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,\n                        latent_dim, epsilon_std, base_dir, analysis_name)\n# Train linear (PCA)\npca.pca_model(base_dir, analysis_name, num_PCs)')
 
 
-# In[15]:
+# In[16]:
 
 
 ## Predict gene expression for each sample
@@ -272,7 +287,7 @@ interpolate.interpolate_in_pca_latent_space(data_dir, model_dir, encoded_dir, ta
                                             out_dir, percent_low, percent_high)
 
 
-# In[18]:
+# In[17]:
 
 
 ## Visualize prediction performance
