@@ -95,10 +95,10 @@ def interpolate_in_gene_space(data_dir, gene_id, out_dir,
         intermediate_target_gene_exp = target_gene_sorted.loc[sample_id]
         alpha = utils.get_scale_factor(
             target_gene_sorted, gene_id, intermediate_target_gene_exp, percent_low, percent_high)
-
+        
         predict = baseline + alpha.values[0] * offset_data
         true = pd.Series.to_frame(non_target_gene_data.loc[sample_id]).T
-
+    
         [coeff, pval] = pearsonr(predict.values.T, true.values.T)
         corr_score[sample_id] = coeff
 
@@ -213,6 +213,8 @@ def interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, latent_dim
         alpha = utils.get_scale_factor(
             target_gene_sorted, gene_id, intermediate_target_gene_exp, percent_low, percent_high)
 
+        #print("baseline is {}".format(baseline_encoded))
+        #print("offset is {}".format(offset_encoded))
         predict = baseline_encoded + alpha.values[0] * offset_encoded
 
         # Decode prediction
@@ -220,11 +222,14 @@ def interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, latent_dim
         predict = pd.DataFrame(
             predict_decoded, columns=non_target_gene_data.columns)
 
+        #print("predict is {}".format(predict))
         true = pd.Series.to_frame(non_target_gene_data.loc[sample_id]).T
 
+        #print("true is {}".format(true))
         [coeff, pval] = pearsonr(predict.values.T, true.values.T)
         corr_score[sample_id] = coeff
-
+    
+        #break
     corr_score_df = pd.DataFrame.from_dict(corr_score, orient='index')
 
     # Output estimated gene experession values

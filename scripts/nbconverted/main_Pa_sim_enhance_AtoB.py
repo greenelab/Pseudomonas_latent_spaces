@@ -134,7 +134,8 @@ assert(len(set(geneSetA).intersection(set(geneSetB))) == 0)
 # In[10]:
 
 
-## Output gene groupings
+## Output gene groupings for exploration to verify input dataset
+# Used in explore_simulated_data.py
 geneSetA_df = pd.DataFrame(geneSetA)
 geneSetB_df = pd.DataFrame(geneSetB)
 
@@ -188,6 +189,7 @@ data[data>=1.0] = 1.0
 
 
 # Dataframe with only gene A expression
+# Used in interpolation analysis
 geneA_only = pd.DataFrame(data[geneSetA_pick], index=data.index, columns=[geneSetA_pick])
 
 geneA_only.head()
@@ -219,6 +221,7 @@ for each_dir in base_dirs:
 # In[14]:
 
 
+## Outputs
 # Output the new gene expression values for each sample
 train_input_file = os.path.join(base_dirs[0], analysis_name, "train_model_input.txt.xz")
 data.to_csv(train_input_file, sep='\t', compression='xz', float_format="%.5g")
@@ -246,7 +249,7 @@ geneA_only.to_csv(geneA_file, sep='\t', float_format="%.5g")
 # In[15]:
 
 
-get_ipython().run_cell_magic('time', '', '## Train compression methods using simulated data\n\n# Parameters to train nonlinear (VAE) compression method\nlearning_rate = 0.001\nbatch_size = 100\nepochs = 200\nkappa = 0.01\nintermediate_dim = 2775\nlatent_dim = 300\nepsilon_std = 1.0\nnum_PCs = latent_dim\n\nbase_dir = os.path.dirname(os.getcwd())\n\n# Train nonlinear (VAE)\nvae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,\n                        latent_dim, epsilon_std, base_dir, analysis_name)\n# Train linear (PCA)\npca.pca_model(base_dir, analysis_name, num_PCs)')
+get_ipython().run_cell_magic('time', '', '## Train compression methods using simulated data\n\n# Parameters to train nonlinear (VAE) compression method\nlearning_rate = 0.001\nbatch_size = 100\nepochs = 200\nkappa = 0.01\nintermediate_dim = 2775\nlatent_dim = 300\nepsilon_std = 1.0\nnum_PCs = latent_dim\n\nbase_dir = os.path.dirname(os.getcwd())\n\n# Train nonlinear (VAE)\n#vae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,\n                        latent_dim, epsilon_std, base_dir, analysis_name)\n# Train linear (PCA)\n#pca.pca_model(base_dir, analysis_name, num_PCs)')
 
 
 # In[16]:
