@@ -272,3 +272,26 @@ def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_d
 
     # serialize weights to HDF5
     decoder.save_weights(weights_decoder_file)
+
+    # Save weight matrix:  how each gene contribute to each feature
+    # build a generator that can sample from the learned distribution
+    # can generate from any sampled z vector
+    decoder_input = Input(shape=(latent_dim, ))
+    x_decoded_mean = decoder_model(decoder_input)
+    decoder = Model(decoder_input, x_decoded_mean)
+    weights = []
+    for layer in decoder.layers:
+        weights.append(layer.get_weights())
+
+    # Multiply hidden layers together to obtain a single representation of gene weights
+    intermediate_weight_df = pd.DataFrame(weights[1][0])
+    hidden_weight_df = pd.DataFrame(weights[1][2])
+    abstracted_weight_df = intermediate_weight_df.dot(hidden_weight_df)
+
+    abstracted_weight_df.index = range(1, latent_dim + 1)
+    abstracted_weight_df.columns = rnaseq.columns
+
+    weight_file = os.path.join(
+        base_dir, "data", analysis_name, "VAE_weight_matrix.txt")
+
+    abstracted_weight_df.to_csv(weight_file, sep='\t')
