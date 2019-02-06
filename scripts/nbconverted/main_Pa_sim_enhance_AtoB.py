@@ -1,40 +1,36 @@
 
 # coding: utf-8
 
-# In[1]:
+# # Simulation experiment
+# 
+# **Hypothesis**: If we generate a gene expression dataset with a strong signal, a nonlinear compression method (VAE)
+#             will be able to learn this signal and predict new gene expression patterns better compared to 
+#             using a linear comparession method (PCA) and using no compression method (all the genes)
+#  
+# **Study design**:
+# 
+# *(Input)* Add signal to Pa gene expression dataset:
+# 
+# Network: gene set A --> gene set B
+# 
+# Add signal to relate A and B using the following algorithm:
+# 
+# Hyperparmeters should include:
+#  1. Size of gene set A
+#  2. Size of gene set B
+#  3. Effect size
+#  4. Threshold
+#  5. Log file with hyperparameter selections
+#          
+# *(Approach)* Train nonlinear (VAE) and linear (PCA) compression algorithms using this simulated data
+# 
+# *(Evaluation)*  For each sample in the Pa dataset compare corr(predicted expression, actual expression)
+# 
+# *(Output)* Figure of the correlation scores per sample 
+
+# In[ ]:
 
 
-#-----------------------------------------------------------------------------------------------------------------
-# Simulation experiment
-#
-# Hypothesis:  If we generate a gene expression dataset with a strong signal, a nonlinear compression method (VAE)
-#              will be able to learn this signal and predict new gene expression patterns better compared to 
-#              using a linear comparession method (PCA) and using no compression method (all the genes)
-# 
-# Study design:
-# 1.  (Input) Add signal to Pa gene expression dataset:
-# 
-#     Network:  gene set A --> gene set B
-#
-#     Add signal to relate A and B using the following algorithm:
-#         if genes in set A expression > threshold_A:
-#             genes in set B are upregulated by some fixed amount
-#
-#     Note:  This algorithm is applied to each sample in the compendium 
-#           (essentially adding a signal to the existing gene expression data in the compendium)
-# 
-#     Hyperparmeters should include: 
-#     1. Size of gene set A
-#     2. Size of gene set B
-#     3. Proportion of gene A expression
-#     4. Thresholds
-#     5. Log file with hyperparameter selections
-# 
-# 2.  (Approach) Train nonlinear (VAE) and linear (PCA) compression algorithms using this simulated data
-# 3.  (Evaluation)  For each sample in the Pa dataset compare corr(predicted expression, actual expression)
-# 4.  (Output)
-#        Figure of the correlation scores per sample 
-#-----------------------------------------------------------------------------------------------------------------
 get_ipython().run_line_magic('load_ext', 'autoreload')
 get_ipython().run_line_magic('autoreload', '2')
 
@@ -131,11 +127,13 @@ print("After removing {} gene ids for set B, there are {} gene ids remaining."
 assert(len(set(geneSetA).intersection(set(geneSetB))) == 0)
 
 
+# ## Output gene groupings 
+# Output gene assignments (group A, B) to be used in [explore_simulated_data.py](explore_simulated_data.ipynb)
+
 # In[10]:
 
 
-## Output gene groupings for exploration to verify input dataset
-# Used in explore_simulated_data.py
+# Output gene groupings
 geneSetA_df = pd.DataFrame(geneSetA)
 geneSetB_df = pd.DataFrame(geneSetB)
 
@@ -147,14 +145,18 @@ geneSetA_df.to_csv(geneSetA_file, sep='\t')
 geneSetB_df.to_csv(geneSetB_file, sep='\t')
 
 
-# In[11]:
-
-
-## Add signal to the data
-
+# ## Add artificial signal to the data
 # Algorithm:
-#     if genes in set A expression > threshold_A:
-#         genes in set B are upregulated by some fixed amount
+# ```python
+# for sample in compendium:
+#     expression(gene_in_set_A) = random(0,1)
+#     if expression(gene_in_set_A) > threshold_A:
+#         expression(gene_in_set_B) = expression(gene_in_set_B)*(1+percentage) 
+# ```
+# Note: This algorithm is applied to each sample in the compendium 
+#       (essentially adding a signal to the existing gene expression data in the compendium)
+
+# In[11]:
 
 
 # Number of samples 
@@ -218,10 +220,15 @@ for each_dir in base_dirs:
     os.makedirs(analysis_dir, exist_ok=True)
 
 
+# ## Outputs
+# Output
+# 1. Simulated dataset (\data)
+# 2. Log file containing hyperparmeters used (\metadata)
+# 3. Expression of representative gene from group A (\data)
+
 # In[14]:
 
 
-## Outputs
 # Output the new gene expression values for each sample
 train_input_file = os.path.join(base_dirs[0], analysis_name, "train_model_input.txt.xz")
 data.to_csv(train_input_file, sep='\t', compression='xz', float_format="%.5g")
@@ -246,16 +253,34 @@ geneA_file = os.path.join(base_dirs[0], analysis_name, geneSetA_pick + ".txt")
 geneA_only.to_csv(geneA_file, sep='\t', float_format="%.5g")
 
 
+# ## Train 
+# Train compression methods (VAE, PCA) using simulated data
+
 # In[15]:
 
 
-get_ipython().run_cell_magic('time', '', '## Train compression methods using simulated data\n\n# Parameters to train nonlinear (VAE) compression method\nlearning_rate = 0.001\nbatch_size = 100\nepochs = 200\nkappa = 0.01\nintermediate_dim = 2775\nlatent_dim = 300\nepsilon_std = 1.0\nnum_PCs = latent_dim\n\nbase_dir = os.path.dirname(os.getcwd())\n\n# Train nonlinear (VAE)\n#vae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,\n                        latent_dim, epsilon_std, base_dir, analysis_name)\n# Train linear (PCA)\n#pca.pca_model(base_dir, analysis_name, num_PCs)')
+get_ipython().run_cell_magic('time', '', '# Parameters to train nonlinear (VAE) compression method\nlearning_rate = 0.001\nbatch_size = 100\nepochs = 200\nkappa = 0.01\nintermediate_dim = 2775\nlatent_dim = 300\nepsilon_std = 1.0\nnum_PCs = latent_dim\n\nbase_dir = os.path.dirname(os.getcwd())\n\n# Train nonlinear (VAE)\nvae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,\n                        latent_dim, epsilon_std, base_dir, analysis_name)\n# Train linear (PCA)\npca.pca_model(base_dir, analysis_name, num_PCs)')
 
+
+# ## Prediction
+# Predict gene expression for each sample in the compendium
+# 
+# Details about how the prediction computation works can be found within the prediction script: [interpolate.py](/functions/interpolate.py)
+# 
+# Algorithm:
+# ```python
+# sort samples based on gene A expression
+# 
+# for sample in compendium:
+#     baseline_expression = expression(sample with low gene A expression)
+#     offset_vector = (expression(high gene A expression) - expression(low gene A expression)
+#     scale_factor = expression(sample)/((expression(high gene A expression) - expression(low gene A expression))
+#     predict_expression = baseline_expression + scale_factor*offset_vector 
+# ```
 
 # In[16]:
 
 
-## Predict gene expression for each sample
 # Prediction based calculation described in interpolate.py
 
 # Define offset vectors in gene space
@@ -290,10 +315,11 @@ interpolate.interpolate_in_pca_latent_space(data_dir, model_dir, encoded_dir, ta
                                             out_dir, percent_low, percent_high)
 
 
+# ## Visualize
+# Visualize prediction performance comparing VAE, PCA, No compression
+
 # In[17]:
 
-
-## Visualize prediction performance
 
 # True if the x-axis of the plot uses the sample index
 # False if the x-asix of the plot uses the gene expression of the target gene
