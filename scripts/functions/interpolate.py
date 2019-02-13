@@ -213,8 +213,6 @@ def interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, latent_dim
         alpha = utils.get_scale_factor(
             target_gene_sorted, gene_id, intermediate_target_gene_exp, percent_low, percent_high)
 
-        #print("baseline is {}".format(baseline_encoded))
-        #print("offset is {}".format(offset_encoded))
         predict = baseline_encoded + alpha.values[0] * offset_encoded
 
         # Decode prediction

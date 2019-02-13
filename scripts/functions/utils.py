@@ -46,8 +46,6 @@ def get_scale_factor(target_gene_sorted, gene_id, expression_profile,
     # scale_factor is the proportion along the gene expression gradient
     scale_factor = expression_profile / denom
 
-    #print("Denominator is {}".format(denom))
-    #print("Scale factor is {}".format(scale_factor))
     return scale_factor
 
 
@@ -74,10 +72,10 @@ def get_gene_expression_above_percent(target_gene_sorted, gene_id,
     threshold_low = np.percentile(target_gene_sorted[gene_id], percent_low)
     low_ids = target_gene_sorted[target_gene_sorted[gene_id]
                                  <= threshold_low].index
-    #print(threshold_low)
+
     # Get sample IDs with the highest [percent_high] of target gene expression
     threshold_high = np.percentile(target_gene_sorted[gene_id], percent_high)
     high_ids = target_gene_sorted[target_gene_sorted[gene_id]
                                   >= threshold_high].index
-    #print(threshold_high)
+
     return [low_ids, high_ids]

@@ -288,7 +288,7 @@ def tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_d
     hidden_weight_df = pd.DataFrame(weights[1][2])
     abstracted_weight_df = intermediate_weight_df.dot(hidden_weight_df)
 
-    abstracted_weight_df.index = range(1, latent_dim + 1)
+    abstracted_weight_df.index = range(0, latent_dim)
     abstracted_weight_df.columns = rnaseq.columns
 
     weight_file = os.path.join(

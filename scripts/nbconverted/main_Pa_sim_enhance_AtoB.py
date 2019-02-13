@@ -28,7 +28,7 @@
 # 
 # *(Output)* Figure of the correlation scores per sample 
 
-# In[ ]:
+# In[1]:
 
 
 get_ipython().run_line_magic('load_ext', 'autoreload')
@@ -134,8 +134,8 @@ assert(len(set(geneSetA).intersection(set(geneSetB))) == 0)
 
 
 # Output gene groupings
-geneSetA_df = pd.DataFrame(geneSetA)
-geneSetB_df = pd.DataFrame(geneSetB)
+geneSetA_df = pd.DataFrame(geneSetA, columns=['gene id'])
+geneSetB_df = pd.DataFrame(geneSetB, columns=['gene id'])
 
 geneSetA_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "geneSetA.txt")
 geneSetB_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "geneSetB.txt")

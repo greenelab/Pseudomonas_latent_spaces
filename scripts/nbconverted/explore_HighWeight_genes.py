@@ -7,7 +7,7 @@
 # Identify high weight (HW) genes for each latent space feature (node)
 # Determine if genes in group A and B are found within these highly weighted genes
 
-# In[2]:
+# In[1]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -24,7 +24,7 @@ from numpy.random import seed
 seed(randomState)
 
 
-# In[3]:
+# In[2]:
 
 
 # Load arguments
@@ -36,7 +36,7 @@ B_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "gene
 #HW_file = os.path.join(os.path.dirname(os.getcwd()), "output", analysis_name, "HW_genes.txt")
 
 
-# In[4]:
+# In[3]:
 
 
 # Read in data
@@ -47,7 +47,7 @@ weight = pd.read_table(data_file, header=0, index_col=0).T
 weight.head(5)
 
 
-# In[5]:
+# In[4]:
 
 
 # Plot the distribution of gene weights per latent feature
@@ -60,7 +60,7 @@ weight.head(5)
 #f.set_size_inches(15, 15)
 
 
-# In[6]:
+# In[5]:
 
 
 # Calculate mean per node ("signature" or "feature")
@@ -71,7 +71,7 @@ stds = weight.std(axis=0)
 two_stds = 2*stds
 
 
-# In[7]:
+# In[6]:
 
 
 # Get high positive and negative weight genes per node ("signature" or "feature") -- HW_df
@@ -89,10 +89,10 @@ for i in range(num_nodes):
     pos_threshold = node_mean + two_stds.iloc[i]
     neg_threshold = node_mean - two_stds.iloc[i]
     
-    hw_pos_genes = weight[weight[i+1] > pos_threshold].index
-    hw_neg_genes = weight[weight[i+1] < neg_threshold].index
+    hw_pos_genes = weight[weight[i] > pos_threshold].index
+    hw_neg_genes = weight[weight[i] < neg_threshold].index
     
-    node = str(i+1)
+    node = str(i)
     node_name = 'Sig'+node+'pos'
     
     # Add high weight positive genes
@@ -117,13 +117,13 @@ HW_df = HW_df.T
 HW_metadata_df = HW_metadata_df.T
 
 
-# In[8]:
+# In[7]:
 
 
 HW_df.head()
 
 
-# In[9]:
+# In[8]:
 
 
 # Dataframe with the mean, std, threshold used per feature to determine high weight gene sets
@@ -131,7 +131,7 @@ HW_metadata_df.columns = ["mean", "std", "threshold"]
 HW_metadata_df.head()
 
 
-# In[10]:
+# In[9]:
 
 
 # Create a table (feature x gene set A)
@@ -145,7 +145,7 @@ for i in range(num_nodes):
     node = str(i+1)
     node_name = 'Sig'+node+'pos'
     
-    gene_weight = weight[i+1]
+    gene_weight = weight[i]
     
     # Add high weight positive genes
     add_pos = pd.DataFrame({node_name: gene_weight})
@@ -162,7 +162,7 @@ Weights_pos_neg_df = Weights_pos_neg_df.T
 Weights_pos_neg_df.head()
 
 
-# In[11]:
+# In[10]:
 
 
 # Compare the weights for geneset A with threshold
@@ -172,13 +172,13 @@ Weight_A = Weights_pos_neg_df[geneSetA_ls]
 Weight_A.head()
 
 
-# In[12]:
+# In[11]:
 
 
 sns.distplot(Weight_A.iloc[0])
 
 
-# In[13]:
+# In[12]:
 
 
 # Compare the weights for geneset B with threshold
@@ -188,13 +188,13 @@ Weight_B = Weights_pos_neg_df[geneSetB_ls]
 Weight_B.head()
 
 
-# In[14]:
+# In[13]:
 
 
 sns.distplot(Weight_B.iloc[0])
 
 
-# In[15]:
+# In[14]:
 
 
 # What is the overlap between the high weight genes and gene sets A and B?
@@ -223,7 +223,7 @@ for i in range(num_features_pos_neg):
 percent_overlap
 
 
-# In[16]:
+# In[15]:
 
 
 # Are there any features that are nonzero?
@@ -235,7 +235,7 @@ print(overlap_in_B.shape)
 overlap_in_A
 
 
-# In[17]:
+# In[16]:
 
 
 overlap_in_B

@@ -7,7 +7,7 @@
 # 
 # We want to test if this offset vector is capturing genes in group A and B
 
-# In[ ]:
+# In[34]:
 
 
 import os
@@ -22,7 +22,7 @@ from numpy.random import seed
 seed(randomState)
 
 
-# In[2]:
+# In[35]:
 
 
 # Load data
@@ -35,7 +35,7 @@ B_file = os.path.join(base_dir, analysis_name, "geneSetB.txt")
 weight_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "VAE_weight_matrix.txt")
 
 
-# In[3]:
+# In[36]:
 
 
 # Read gene space offset
@@ -43,7 +43,7 @@ offset_gene_space = pd.read_table(offset_gene_file, header=0, index_col=0)
 offset_gene_space
 
 
-# In[4]:
+# In[37]:
 
 
 # Read VAE space offset
@@ -51,7 +51,7 @@ offset_vae_space = pd.read_table(offset_vae_file, header=0, index_col=0)
 offset_vae_space
 
 
-# In[5]:
+# In[38]:
 
 
 # Read genes in set A
@@ -60,7 +60,7 @@ geneSetA_ls = [l[0] for l in geneSetA.values.tolist()]
 geneSetA_set = set(geneSetA_ls)
 
 
-# In[6]:
+# In[39]:
 
 
 # Read genes in set B
@@ -69,7 +69,7 @@ geneSetB_ls = [l[0] for l in geneSetB.values.tolist()]
 geneSetB_set = set(geneSetB_ls)
 
 
-# In[7]:
+# In[40]:
 
 
 # Read weight matrix
@@ -82,14 +82,14 @@ weight.head(5)
 # 1.  What genes are most highly weighted?
 # 2.  What percentage of these genes are in gene set A and B?
 
-# In[8]:
+# In[41]:
 
 
 # Distribution of weights in offset vector
 sns.distplot(offset_gene_space)
 
 
-# In[9]:
+# In[42]:
 
 
 # Get gene ids with the highest weight from the offset vector
@@ -99,7 +99,7 @@ print("Threshold cutoff is {}".format(threshold))
 highest_genes = offset_gene_space.T[offset_gene_space.T[0] > threshold].index
 
 
-# In[10]:
+# In[43]:
 
 
 # Compare the overlap of genes in set A and highest weighted genes in offset
@@ -107,7 +107,7 @@ venn2([set(highest_genes), geneSetA_set], set_labels = ('High weight offset gene
 plt.show()
 
 
-# In[11]:
+# In[44]:
 
 
 # Compare the overlap of genes in set B and highest weighted genes in offset
@@ -119,22 +119,19 @@ plt.show()
 # 1.  Which feature has the highest value?
 # 2.  Are genes in set A and B highly weighted 
 
-# In[12]:
+# In[45]:
 
 
 # Distribution of weights in offset vector
 sns.distplot(offset_vae_space)
 
 
-# In[13]:
+# In[64]:
 
 
 # Get latent feature with the max and min value
-max_value = max(offset_vae_space.T[0])
-min_value = min(offset_vae_space.T[0])
-
-max_feature = offset_vae_space.T[offset_vae_space.T[0] == max_value].index[0]
-min_feature = offset_vae_space.T[offset_vae_space.T[0] == min_value].index[0]
+max_feature = offset_vae_space.T.idxmax()[0]
+min_feature = offset_vae_space.T.idxmin()[0]
 print("Max feature is {} and min feature is {}".format(max_feature, min_feature))
 
 
@@ -230,7 +227,7 @@ lowest_genes = genes_min_feature[genes_min_feature < threshold].index
 
 
 # Compare the overlap of genes in set A and highest positive weighted genes in the min feature
-venn2([set(highest_genes), geneSetA_set], set_labels = ('High negative weight genes in feature {}'.format(min_feature), 'Group A genes'))
+venn2([set(highest_genes), geneSetA_set], set_labels = ('High positive weight genes in feature {}'.format(min_feature), 'Group A genes'))
 plt.show()
 
 
@@ -238,7 +235,7 @@ plt.show()
 
 
 # Compare the overlap of genes in set B and highest positive weighted genes in the min feature
-venn2([set(highest_genes), geneSetB_set], set_labels = ('High negative weight genes in feature {}'.format(min_feature), 'Group B genes'))
+venn2([set(highest_genes), geneSetB_set], set_labels = ('High positive weight genes in feature {}'.format(min_feature), 'Group B genes'))
 plt.show()
 
 
@@ -257,3 +254,7 @@ plt.show()
 venn2([set(lowest_genes), geneSetB_set], set_labels = ('High negative weight genes in feature {}'.format(min_feature), 'Group B genes'))
 plt.show()
 
+
+# Observation:
+# 
+# Notice that the overlap of the high weight genes in the min features and max feature are very similar -- why is this?
