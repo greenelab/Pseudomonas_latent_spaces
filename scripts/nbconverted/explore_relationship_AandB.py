@@ -8,7 +8,7 @@
 # This notebook is tryign to determine if our VAE model is able to detect the relationship between A and B (i.e. when the expression of genes in set A exceed some threshold then the genes in set B are upregulated).
 # 
 
-# In[1]:
+# In[2]:
 
 
 get_ipython().run_line_magic('load_ext', 'autoreload')
@@ -70,7 +70,7 @@ print(sim_data.shape)
 sim_data.head()
 
 
-# In[5]:
+# In[14]:
 
 
 # Select samples that have expression of gene A around the threshold 
@@ -94,15 +94,15 @@ test_samples_sorted.head()
 # 
 # How is B changing with respect to A in our simulated dataset?
 # 
-# Plot gene expression of A vs mean(gene B expression).  This plot will serve as a reference against the later plot that will show gene expression of A vs mean(transformed gene B expression)
+# Plot gene expression of A vs mean(gene B expression).  This plot will serve as a reference against the later plot that will show gene expression of A vs mean(**transformed** gene B expression)
 
-# In[6]:
+# In[15]:
 
 
 # Get the means of B genes
 
 # Convert dataframe with gene ids to list
-geneSetB_ls = [l[0] for l in geneSetB.values.tolist()]
+geneSetB_ls = geneSetB['gene id'].values.tolist()
 
 geneSetB_exp = test_samples[geneSetB_ls]
 
@@ -154,7 +154,61 @@ def interpolate_in_vae_latent_space_AB(all_data,
                                        percent_high,
                                        out_dir):
     """
-    Description here
+    interpolate_in_vae_latent_space(all_data: dataframe,
+                                    sample_data: dataframe,
+                                    model_encoder_file: string,
+                                    model_decoder_file: string,
+                                    weights_encoder_file: string,
+                                    weights_decoder_file: string,
+                                    encoded_dir: string,
+                                    gene_id: string,
+                                    percent_low: integer,
+                                    percent_high: integer,
+                                    out_dir: string):
+
+    input:
+        all_data: Dataframe with gene expression data from all samples
+        
+        sample_data:  Dataframe with gene expression data from subset of samples (around the treshold)
+
+        model_encoder_file: file containing the learned vae encoder model
+
+        model_decoder_file: file containing the learned vae decoder model
+        
+        weights_encoder_file: file containing the learned weights associated with the vae encoder model
+        
+        weights_decoder_file: file containing the learned weights associated with the vae decoder model
+        
+        encoded_dir:  directory to use to output offset vector to 
+
+        gene_id: gene you are using as the "phenotype" to sort samples by 
+
+                 This gene is referred to as "target_gene" in comments below
+
+
+        percent_low: integer between 0 and 1
+
+        percent_high: integer between 0 and 1
+        
+        out_dir: directory to output predicted gene expression to
+
+    computation:
+        1.  Sort samples based on the expression level of the target gene defined by the user
+        2.  Sample_data are encoded into VAE latent space
+        3.  We predict the expression profile of the OTHER genes at a given level of target gene 
+            expression by adding a scale factor of offset vector to the sample
+
+            The scale factor depends on the distance along the target gene expression gradient
+            the sample is.  For example the range along the target gene expression is from 0 to 1.  
+            If the sample of interest has a target gene expression of 0.3 then our prediction
+            for the gene expression of all other genes is equal to the gene expression corresponding
+            to the target gene expression=0 + 0.3*offset latent vector
+        3.  Prediction is decoded back into gene space
+        4.  This computation is repeated for all samples 
+
+    output: 
+         1. encoded predicted expression profile per sample
+         2. predicted expression profile per sample
 
     """
 
@@ -222,12 +276,15 @@ def interpolate_in_vae_latent_space_AB(all_data,
 def get_scale_factor(target_gene_sorted, expression_profile,
                      percent_low, percent_high):
     """
-    get_scale_factor(target_gene_sorted: df, gene_id: string, expression_profile: df):
+    get_scale_factor(target_gene_sorted: dataframe,
+                    expression_profile: dataframe,
+                    percent_low: integer,
+                    percent_high: integer,):
 
     input:
         target_gene_sorted: dataframe of sorted target gene expression
 
-        gene_id: gene you are using as the "phenotype" to sort samples by
+        expression_profile: dataframe of gene expression for selected sample
 
         percent_low: integer between 0 and 1
 
@@ -305,7 +362,7 @@ predict_gene_exp.head()
 # Get the means of B genes
 
 # Convert dataframe with gene ids to list
-geneSetB_ls = [l[0] for l in geneSetB.values.tolist()]
+geneSetB_ls = geneSetB['gene id'].values.tolist()
 
 geneSetB_exp = predict_gene_exp[geneSetB_ls]
 
@@ -335,6 +392,8 @@ sns.regplot(x='gene A untransformed',
             y='mean gene B transformed',
            data = A_and_B_df)
 
+
+# **Observations**:  This plot shows that the relationship that is learned by the VAE appears to be linear, which is NOT the relationship that we put into the dataset (remember we put a step function relationship).  So now the question is why the VAE is learning a linear relationship between A and B genes?  Or is this an artifact of how we plotted the data?
 
 # ## What is the offset capturing?
 # 
@@ -464,7 +523,7 @@ diff_data_encoded.iloc[feature_names]
 
 
 # What is the weight of the offset vector for this top feature?
-top_feature = top_features.index[2]
+top_feature = top_features.index[0]
 print(offset_vae_space[top_feature])
 
 sns.distplot(offset_vae_space)
@@ -545,8 +604,8 @@ hw_neg_genes
 
 
 # Convert dataframe with gene ids to list
-geneSetA_ls = [l[0] for l in geneSetA.values.tolist()]
-geneSetB_ls = [l[0] for l in geneSetB.values.tolist()]
+geneSetA_ls = geneSetA['gene id'].values.tolist()
+geneSetB_ls = geneSetB['gene id'].values.tolist()
 
 geneSetA_set = set(geneSetA_ls)
 geneSetB_set = set(geneSetB_ls)

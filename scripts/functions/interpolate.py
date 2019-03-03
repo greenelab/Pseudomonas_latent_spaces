@@ -23,7 +23,11 @@ seed(randomState)
 def interpolate_in_gene_space(data_dir, gene_id, out_dir,
                               percent_low, percent_high):
     """
-    interpolate_in_gene_space(data_dir: string, gene_id: string, out_dir: string):
+    interpolate_in_gene_space(data_dir: string,
+                              gene_id: string,
+                              percent_low: integer,
+                              percent_high: integer,
+                              out_dir: string):
 
     input:
         data_dir: directory containing the raw gene expression data and the offset vector
@@ -32,11 +36,11 @@ def interpolate_in_gene_space(data_dir, gene_id, out_dir,
 
                  This gene is referred to as "target_gene" in comments below
 
-        out_dir: directory to output predicted gene expression to
-
         percent_low: integer between 0 and 1
 
         percent_high: integer between 0 and 1
+        
+        out_dir: directory to output predicted gene expression to
 
     computation:
         1.  Sort samples based on the expression level of the target gene defined by the user
@@ -51,7 +55,7 @@ def interpolate_in_gene_space(data_dir, gene_id, out_dir,
         3.  This computation is repeated for all samples 
 
     output: 
-         1. predicted expression profile per sample (intermediate samples x 2 statistical scores --> correlation and pvalue)
+         1. correlation score between the predicted and observed expression profile per sample
          2. target gene expression sorted by expression level for reference when plotting
 
     """
@@ -113,7 +117,14 @@ def interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, latent_dim
                                     gene_id, out_dir,
                                     percent_low, percent_high):
     """
-    interpolate_in_vae_latent_space(data_dir: string, gene_id: string, out_dir: string):
+    interpolate_in_vae_latent_space(data_dir: string,
+                                    model_dir: string,
+                                    encoded_dir: string,
+                                    latent_dim: integer,
+                                    gene_id: string,
+                                    out_dir: string,
+                                    percent_low: integer,
+                                    percent_high: integer):
 
     input:
         data_dir: directory containing the raw gene expression data and the offset vector
@@ -121,6 +132,8 @@ def interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, latent_dim
         model_dir: directory containing the learned vae models
 
         encoded_dir: directory to use to output offset vector to 
+        
+        latent_dim: dimension of latent space that the data is compressed to
 
         gene_id: gene you are using as the "phenotype" to sort samples by 
 
@@ -237,7 +250,13 @@ def interpolate_in_vae_latent_space(data_dir, model_dir, encoded_dir, latent_dim
 def interpolate_in_pca_latent_space(data_dir, model_dir, encoded_dir, gene_id,
                                     out_dir, percent_low, percent_high):
     """
-    interpolate_in_pca_latent_space(data_dir: string, gene_id: string, out_dir: string):
+    interpolate_in_pca_latent_space(data_dir: string,
+                                    model_dir: string,
+                                    encoded_dir: string,
+                                    gene_id: string,
+                                    out_dir: string,
+                                    percent_low: integer,
+                                    percent_high: integer):
 
     input:
         data_dir: directory containing the raw gene expression data and the offset vector
