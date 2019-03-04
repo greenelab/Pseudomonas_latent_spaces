@@ -8,7 +8,7 @@
 # This notebook is tryign to determine if our VAE model is able to detect the relationship between A and B (i.e. when the expression of genes in set A exceed some threshold then the genes in set B are upregulated).
 # 
 
-# In[2]:
+# In[1]:
 
 
 get_ipython().run_line_magic('load_ext', 'autoreload')
@@ -70,7 +70,7 @@ print(sim_data.shape)
 sim_data.head()
 
 
-# In[14]:
+# In[5]:
 
 
 # Select samples that have expression of gene A around the threshold 
@@ -96,7 +96,7 @@ test_samples_sorted.head()
 # 
 # Plot gene expression of A vs mean(gene B expression).  This plot will serve as a reference against the later plot that will show gene expression of A vs mean(**transformed** gene B expression)
 
-# In[15]:
+# In[6]:
 
 
 # Get the means of B genes
@@ -123,6 +123,11 @@ A_and_B_before_df = pd.merge(original_A_exp.to_frame('gene A untransformed'),
                       left_index=True, right_index=True)
 A_and_B_before_df.head()
 
+
+# ### Plot
+# The plot below shows the signal that was added to the dataset.  This signal assigned a set of genes to group A and a set of genes to group B. If the expression of genes in group A exceeded some threshold then the genes in group B were upregulated.  
+# 
+# So we see a step function relationship between the expression of genes in group A and the expression of genes in group B.  With a threshold of 0.5 we can see that the expression of genes in B are upregulated.
 
 # In[8]:
 
@@ -388,12 +393,36 @@ A_and_B_df.head()
 
 
 # Plot
+# A before transformation vs B after transformation
 sns.regplot(x='gene A untransformed',
             y='mean gene B transformed',
            data = A_and_B_df)
 
 
-# **Observations**:  This plot shows that the relationship that is learned by the VAE appears to be linear, which is NOT the relationship that we put into the dataset (remember we put a step function relationship).  So now the question is why the VAE is learning a linear relationship between A and B genes?  Or is this an artifact of how we plotted the data?
+# In[40]:
+
+
+# Join original expression of transformed A and mean(transformed expression of B)
+predict_A_exp = predict_gene_exp[rep_gene_A]
+predict_B_mean_exp = geneSetB_mean
+
+A_and_B_predict_df = pd.merge(predict_A_exp.to_frame('gene A transformed'),
+                      predict_B_mean_exp.to_frame('mean gene B transformed'),
+                      left_index=True, right_index=True)
+A_and_B_predict_df.head()
+
+
+# In[41]:
+
+
+# Plot
+# A after transformation vs B after transformation
+sns.regplot(x='gene A transformed',
+            y='mean gene B transformed',
+           data = A_and_B_predict_df)
+
+
+# **Observations**:  This plot shows that the relationship that is learned by the VAE appears to be linear, which is NOT the relationship that we put into the dataset (remember we put a step function relationship).  So now the question is why the VAE is learning a linear relationship between A and B genes?
 
 # ## What is the offset capturing?
 # 
@@ -403,7 +432,7 @@ sns.regplot(x='gene A untransformed',
 # 
 # Currently we are using the extremes of gene A to capture the “essence of A” and what it means to “turn on”
 
-# In[15]:
+# In[16]:
 
 
 # Read VAE space offset
@@ -411,7 +440,7 @@ offset_vae_space = pd.read_table(offset_vae_file, header=0, index_col=0)
 offset_vae_space
 
 
-# In[16]:
+# In[17]:
 
 
 # Read dataframe with gene expression transformed
@@ -422,14 +451,22 @@ print(predict_encoded_gene_exp.shape)
 predict_encoded_gene_exp.head()
 
 
-# In[17]:
+# In[18]:
 
 
 data_encoded = pd.concat([offset_vae_space, predict_encoded_gene_exp], axis=0)
 data_encoded.head()
 
 
-# In[18]:
+# ### Gene expression pattern around threshold
+# 
+# We looked at the samples around the threshold encoded in the latent space (300 dimensions).  
+# 
+# The heatmap shows that each row is a sample and the column is the latent space feature.  Each sample is grouped such that samples that are below the 0.5 threshold are labeled blue, at the threshold +/- 0.01 are green, above the 0.5 threshold are magenta.
+# 
+# We don't see a very clear trend by eye.
+
+# In[19]:
 
 
 # Add group labels per sample (<0.5, 0.5, 0.5>)
@@ -451,7 +488,7 @@ data_encoded_labeled = data_encoded.assign(
 data_encoded_labeled.head()
 
 
-# In[19]:
+# In[20]:
 
 
 # Heatmap sorted by gene expression signature
@@ -469,13 +506,14 @@ sns.clustermap(data_encoded,
                col_cluster=False,
                metric="correlation",
                row_colors=row_colors,
-               figsize=(50,50))
+               figsize=(50,50),
+              cmap='viridis')
 
 
 # ### Collapse gene expression pattern
 # It is difficult to see any trends in large heatmap so collapse the encoded gene expression using mean per group
 
-# In[20]:
+# In[21]:
 
 
 # Get mean of samples in each group ()
@@ -485,7 +523,7 @@ data_encoded_mean_threshold = pd.DataFrame(data_encoded_labeled[data_encoded_lab
 data_encoded_mean_greater = pd.DataFrame(data_encoded_labeled[data_encoded_labeled.threshold_group == 'greater'].mean(numeric_only=True))
 
 
-# In[21]:
+# In[22]:
 
 
 # Plot mean expression for each group
@@ -499,7 +537,7 @@ sns.heatmap(data_encoded_mean_greater.T, annot = True, cmap = "RdBu_r")
 
 # ### Which features have the largest difference as we cross the threshold?
 
-# In[22]:
+# In[23]:
 
 
 # Difference in means
@@ -511,7 +549,7 @@ top_features = abs_diff_data_encoded[0].nlargest()
 top_features
 
 
-# In[23]:
+# In[24]:
 
 
 # Check sign of top features
@@ -519,7 +557,7 @@ feature_names = [int(l) for l in top_features.index]
 diff_data_encoded.iloc[feature_names]
 
 
-# In[24]:
+# In[25]:
 
 
 # What is the weight of the offset vector for this top feature?
@@ -533,7 +571,7 @@ sns.distplot(offset_vae_space)
 # 
 # Plot trend of encoded values along threshold for top feature
 
-# In[25]:
+# In[26]:
 
 
 # Join sorted original expression of A and encoded expression of top feature
@@ -546,7 +584,7 @@ trend_feature_df = pd.merge(original_A_exp.to_frame('gene A untransformed'),
 trend_feature_df.head()
 
 
-# In[26]:
+# In[27]:
 
 
 # Plot
@@ -557,7 +595,7 @@ sns.regplot(x='gene A untransformed',
 
 # ## Which genes are highly weighted in the feature of significance?
 
-# In[27]:
+# In[28]:
 
 
 # Read in weight matrix
@@ -565,7 +603,7 @@ weight = pd.read_table(weight_file, header=0, index_col=0).T
 weight.head(5)
 
 
-# In[28]:
+# In[29]:
 
 
 # Get genes associated with top feature
@@ -573,7 +611,7 @@ top_feature = int(top_features.index[0])
 top_feature_genes = weight[top_feature]
 
 
-# In[29]:
+# In[30]:
 
 
 # Calculate mean per node ("signature" or "feature")
@@ -593,14 +631,14 @@ print(hw_pos_genes.shape)
 hw_pos_genes
 
 
-# In[30]:
+# In[31]:
 
 
 print(hw_neg_genes.shape)
 hw_neg_genes
 
 
-# In[31]:
+# In[32]:
 
 
 # Convert dataframe with gene ids to list
@@ -611,7 +649,7 @@ geneSetA_set = set(geneSetA_ls)
 geneSetB_set = set(geneSetB_ls)
 
 
-# In[32]:
+# In[33]:
 
 
 # Compare the overlap of genes in set A and highest positive weighted genes in top feature
@@ -619,7 +657,7 @@ venn2([set(hw_pos_genes), geneSetA_set], set_labels = ('High weight pos genes', 
 plt.show()
 
 
-# In[33]:
+# In[34]:
 
 
 # Compare the overlap of genes in set B and highest positive weighted genes in top feature
@@ -627,7 +665,7 @@ venn2([set(hw_pos_genes), geneSetB_set], set_labels = ('High weight pos genes', 
 plt.show()
 
 
-# In[34]:
+# In[35]:
 
 
 # Compare the overlap of genes in set A and highest negative weighted genes in top feature
@@ -635,7 +673,7 @@ venn2([set(hw_neg_genes), geneSetA_set], set_labels = ('High weight neg genes', 
 plt.show()
 
 
-# In[35]:
+# In[36]:
 
 
 # Compare the overlap of genes in set B and highest negative weighted genes in top feature
