@@ -422,7 +422,9 @@ sns.regplot(x='gene A transformed',
            data = A_and_B_predict_df)
 
 
-# **Observations**:  This plot shows that the relationship that is learned by the VAE appears to be linear, which is NOT the relationship that we put into the dataset (remember we put a step function relationship).  So now the question is why the VAE is learning a linear relationship between A and B genes?
+# **Observations**:  This plot shows that the relationship that is learned by the VAE appears to be mostly linear but there is a slight kink around the threshold.  Recall that the input relationship we put into the dataset was a step function relationship.  
+# 
+# So now the question is why the VAE is learning a mostly linear relationship between A and B genes?  
 
 # ## What is the offset capturing?
 # 
