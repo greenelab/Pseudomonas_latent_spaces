@@ -7,7 +7,7 @@
 # 
 # We want to test if this offset vector is capturing genes in group A and B
 
-# In[34]:
+# In[1]:
 
 
 import os
@@ -22,7 +22,7 @@ from numpy.random import seed
 seed(randomState)
 
 
-# In[35]:
+# In[2]:
 
 
 # Load data
@@ -35,7 +35,7 @@ B_file = os.path.join(base_dir, analysis_name, "geneSetB.txt")
 weight_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "VAE_weight_matrix.txt")
 
 
-# In[36]:
+# In[3]:
 
 
 # Read gene space offset
@@ -43,7 +43,7 @@ offset_gene_space = pd.read_table(offset_gene_file, header=0, index_col=0)
 offset_gene_space
 
 
-# In[37]:
+# In[4]:
 
 
 # Read VAE space offset
@@ -51,7 +51,7 @@ offset_vae_space = pd.read_table(offset_vae_file, header=0, index_col=0)
 offset_vae_space
 
 
-# In[38]:
+# In[5]:
 
 
 # Read genes in set A
@@ -60,7 +60,7 @@ geneSetA_ls = [l[0] for l in geneSetA.values.tolist()]
 geneSetA_set = set(geneSetA_ls)
 
 
-# In[39]:
+# In[6]:
 
 
 # Read genes in set B
@@ -69,7 +69,7 @@ geneSetB_ls = [l[0] for l in geneSetB.values.tolist()]
 geneSetB_set = set(geneSetB_ls)
 
 
-# In[40]:
+# In[7]:
 
 
 # Read weight matrix
@@ -82,14 +82,14 @@ weight.head(5)
 # 1.  What genes are most highly weighted?
 # 2.  What percentage of these genes are in gene set A and B?
 
-# In[41]:
+# In[8]:
 
 
 # Distribution of weights in offset vector
 sns.distplot(offset_gene_space)
 
 
-# In[42]:
+# In[9]:
 
 
 # Get gene ids with the highest weight from the offset vector
@@ -99,7 +99,7 @@ print("Threshold cutoff is {}".format(threshold))
 highest_genes = offset_gene_space.T[offset_gene_space.T[0] > threshold].index
 
 
-# In[43]:
+# In[10]:
 
 
 # Compare the overlap of genes in set A and highest weighted genes in offset
@@ -107,7 +107,7 @@ venn2([set(highest_genes), geneSetA_set], set_labels = ('High weight offset gene
 plt.show()
 
 
-# In[44]:
+# In[11]:
 
 
 # Compare the overlap of genes in set B and highest weighted genes in offset
@@ -119,14 +119,14 @@ plt.show()
 # 1.  Which feature has the highest value?
 # 2.  Are genes in set A and B highly weighted 
 
-# In[45]:
+# In[12]:
 
 
 # Distribution of weights in offset vector
 sns.distplot(offset_vae_space)
 
 
-# In[64]:
+# In[13]:
 
 
 # Get latent feature with the max and min value
@@ -134,6 +134,8 @@ max_feature = offset_vae_space.T.idxmax()[0]
 min_feature = offset_vae_space.T.idxmin()[0]
 print("Max feature is {} and min feature is {}".format(max_feature, min_feature))
 
+
+# ### Genes in feature that corresponds to max offset score
 
 # In[14]:
 
@@ -174,12 +176,34 @@ plt.show()
 # In[18]:
 
 
+# Output intersected sets
+intersect_highpos_geneA = geneSetA_set.intersection(set(highest_genes))
+intersect_highpos_geneA_df = pd.DataFrame(list(intersect_highpos_geneA), columns=['gene id'])
+
+intersect_file = os.path.join(base_dir, analysis_name, "intersect_feature{}_highpos_geneA.txt".format(max_feature))
+intersect_highpos_geneA_df.to_csv(intersect_file, sep='\t')
+
+
+# In[19]:
+
+
 # Compare the overlap of genes in set B and highest positive weighted genes in the max feature
 venn2([set(highest_genes), geneSetB_set], set_labels = ('High positive weight genes in feature {}'.format(max_feature), 'Group B genes'))
 plt.show()
 
 
-# In[28]:
+# In[20]:
+
+
+# Output intersected sets
+intersect_highpos_geneB = geneSetB_set.intersection(set(highest_genes))
+intersect_highpos_geneB_df = pd.DataFrame(list(intersect_highpos_geneB), columns=['gene id'])
+
+intersect_file = os.path.join(base_dir, analysis_name, "intersect_feature{}_highpos_geneB.txt".format(max_feature))
+intersect_highpos_geneB_df.to_csv(intersect_file, sep='\t')
+
+
+# In[21]:
 
 
 # Compare the overlap of genes in set A and highest negative weighted genes in the max feature
@@ -187,7 +211,7 @@ venn2([set(lowest_genes), geneSetA_set], set_labels = ('High negative weight gen
 plt.show()
 
 
-# In[29]:
+# In[22]:
 
 
 # Compare the overlap of genes in set B and highest negative weighted genes in the max feature
@@ -195,7 +219,20 @@ venn2([set(lowest_genes), geneSetB_set], set_labels = ('High negative weight gen
 plt.show()
 
 
-# In[21]:
+# In[23]:
+
+
+# Output intersected sets
+intersect_highneg_geneB = geneSetB_set.intersection(set(lowest_genes))
+intersect_highneg_geneB_df = pd.DataFrame(list(intersect_highneg_geneB), columns=['gene id'])
+
+intersect_file = os.path.join(base_dir, analysis_name, "intersect_feature{}_highneg_geneB.txt".format(max_feature))
+intersect_highneg_geneB_df.to_csv(intersect_file, sep='\t')
+
+
+# ### Genes in feature that corresponds to minimum offset score
+
+# In[24]:
 
 
 # Get gene weights for min latent feature
@@ -203,7 +240,7 @@ genes_min_feature = weight[int(min_feature)]
 sns.distplot(genes_min_feature)
 
 
-# In[22]:
+# In[25]:
 
 
 # Get gene ids with the highest positive weight from the min feature selected
@@ -213,7 +250,7 @@ print("Threshold cutoff is {}".format(threshold))
 highest_genes = genes_min_feature[genes_min_feature > threshold].index
 
 
-# In[23]:
+# In[26]:
 
 
 # Get gene ids with the highest negative weight from the min feature selected
@@ -223,7 +260,7 @@ print("Threshold cutoff is {}".format(threshold))
 lowest_genes = genes_min_feature[genes_min_feature < threshold].index
 
 
-# In[33]:
+# In[27]:
 
 
 # Compare the overlap of genes in set A and highest positive weighted genes in the min feature
@@ -231,12 +268,23 @@ venn2([set(highest_genes), geneSetA_set], set_labels = ('High positive weight ge
 plt.show()
 
 
-# In[32]:
+# In[28]:
 
 
 # Compare the overlap of genes in set B and highest positive weighted genes in the min feature
 venn2([set(highest_genes), geneSetB_set], set_labels = ('High positive weight genes in feature {}'.format(min_feature), 'Group B genes'))
 plt.show()
+
+
+# In[29]:
+
+
+# Output intersected sets
+intersect_highpos_geneB = geneSetB_set.intersection(set(highest_genes))
+intersect_highpos_geneB_df = pd.DataFrame(list(intersect_highpos_geneB), columns=['gene id'])
+
+intersect_file = os.path.join(base_dir, analysis_name, "intersect_feature{}_highpos_geneB.txt".format(min_feature))
+intersect_highpos_geneB_df.to_csv(intersect_file, sep='\t')
 
 
 # In[30]:
@@ -250,9 +298,31 @@ plt.show()
 # In[31]:
 
 
+# Output intersected sets
+intersect_highneg_geneA = geneSetA_set.intersection(set(lowest_genes))
+intersect_highneg_geneA_df = pd.DataFrame(list(intersect_highneg_geneA), columns=['gene id'])
+
+intersect_file = os.path.join(base_dir, analysis_name, "intersect_feature{}_highneg_geneA.txt".format(min_feature))
+intersect_highneg_geneA_df.to_csv(intersect_file, sep='\t')
+
+
+# In[32]:
+
+
 # Compare the overlap of genes in set B and highest negative weighted genes in the min feature
 venn2([set(lowest_genes), geneSetB_set], set_labels = ('High negative weight genes in feature {}'.format(min_feature), 'Group B genes'))
 plt.show()
+
+
+# In[33]:
+
+
+# Output intersected sets
+intersect_highneg_geneB = geneSetB_set.intersection(set(lowest_genes))
+intersect_highneg_geneB_df = pd.DataFrame(list(intersect_highneg_geneB), columns=['gene id'])
+
+intersect_file = os.path.join(base_dir, analysis_name, "intersect_feature{}_highneg_geneB.txt".format(min_feature))
+intersect_highneg_geneB_df.to_csv(intersect_file, sep='\t')
 
 
 # Observation:
