@@ -406,7 +406,7 @@ sns.regplot(x='gene A transformed',
 # 
 # Here we are only changing samples **before** they have been encoded into the latent space and then we apply our latent space transformation.  If we compare these trends with those from #2 module, which show what the decoder is supposedly learning, then we can conclude what the encoder is learning.
 
-# In[21]:
+# In[15]:
 
 
 # Artificially shift gene A expression
@@ -426,7 +426,7 @@ A_exp_sample_modified_df.append(A_exp_sample, ignore_index=True)
 geneSetA_ls = geneSetA['gene id'].values.tolist()
 
 # Artificially shift genes in set A
-new_A_exp = np.linspace(0.41, 0.60, num=20)
+new_A_exp = np.linspace(0.41, 0.60, num=100)
 
 for i in new_A_exp:
     test_samples_sorted.loc[test_sample,geneSetA_ls] = i
@@ -439,14 +439,151 @@ A_exp_sample_modified_df.head()
 # In[16]:
 
 
+# Define function to apply latent space transformation to SHIFTED data and output reconstructed data
+
+def interpolate_in_vae_latent_space_shiftA(all_data, 
+                                       sample_data,
+                                       model_encoder_file,
+                                       model_decoder_file,
+                                       weights_encoder_file,
+                                       weights_decoder_file,
+                                       encoded_dir,
+                                       gene_id,
+                                       percent_low,
+                                       percent_high,
+                                       out_dir):
+    """
+    interpolate_in_vae_latent_space(all_data: dataframe,
+                                    sample_data: dataframe,
+                                    model_encoder_file: string,
+                                    model_decoder_file: string,
+                                    weights_encoder_file: string,
+                                    weights_decoder_file: string,
+                                    encoded_dir: string,
+                                    gene_id: string,
+                                    percent_low: integer,
+                                    percent_high: integer,
+                                    out_dir: string):
+
+    input:
+        all_data: Dataframe with gene expression data from all samples
+        
+        sample_data:  Dataframe with gene expression data from subset of samples (around the treshold)
+
+        model_encoder_file: file containing the learned vae encoder model
+
+        model_decoder_file: file containing the learned vae decoder model
+        
+        weights_encoder_file: file containing the learned weights associated with the vae encoder model
+        
+        weights_decoder_file: file containing the learned weights associated with the vae decoder model
+        
+        encoded_dir:  directory to use to output offset vector to 
+
+        gene_id: gene you are using as the "phenotype" to sort samples by 
+
+                 This gene is referred to as "target_gene" in comments below
+
+
+        percent_low: integer between 0 and 1
+
+        percent_high: integer between 0 and 1
+        
+        out_dir: directory to output predicted gene expression to
+
+    computation:
+        1.  Sort samples based on the expression level of the target gene defined by the user
+        2.  Sample_data are encoded into VAE latent space
+        3.  We predict the expression profile of the OTHER genes at a given level of target gene 
+            expression by adding a scale factor of offset vector to the sample
+
+            The scale factor depends on the distance along the target gene expression gradient
+            the sample is.  For example the range along the target gene expression is from 0 to 1.  
+            If the sample of interest has a target gene expression of 0.3 then our prediction
+            for the gene expression of all other genes is equal to the gene expression corresponding
+            to the target gene expression=0 + 0.3*offset latent vector
+        3.  Prediction is decoded back into gene space
+        4.  This computation is repeated for all samples 
+
+    output: 
+         1. encoded predicted expression profile per sample
+         2. predicted expression profile per sample
+
+    """
+
+    # Load arguments
+    offset_file = os.path.join(encoded_dir, "offset_latent_space_vae.txt")
+
+    # Output file
+    predict_file = os.path.join(out_dir, "shifted_predicted_gene_exp.txt")
+    predict_encoded_file = os.path.join(out_dir, "shifted_predicted_encoded_gene_exp.txt")
+
+    # Read in data
+    target_gene_data = all_data[gene_id]
+    offset_encoded = pd.read_table(offset_file, header=0, index_col=0)    
+    
+    # read in saved VAE models
+    loaded_model = load_model(model_encoder_file)
+    loaded_decoder_model = load_model(model_decoder_file)
+
+    # load weights into models
+    loaded_model.load_weights(weights_encoder_file)
+    loaded_decoder_model.load_weights(weights_decoder_file)
+    
+    # Sort target gene data by expression (lowest --> highest)
+    target_gene_sorted = target_gene_data.sort_values()
+
+    lowest_file = os.path.join(encoded_dir, "lowest_encoded_vae.txt")
+    low_exp_encoded = pd.read_table(lowest_file, header=0, index_col=0)
+    
+    # Average gene expression across samples in each extreme group
+    lowest_mean_encoded = low_exp_encoded.mean(axis=0)
+
+    # Format and rename as "baseline"
+    baseline_encoded = pd.DataFrame(
+        lowest_mean_encoded, index=offset_encoded.columns).T
+    
+    # Initialize dataframe for predicted expression of sampled data
+    predicted_sample_data = pd.DataFrame(columns=sample_data.columns)
+    predicted_encoded_sample_data = pd.DataFrame()
+    
+    sample_ids = sample_data.index
+    for sample_id in sample_ids:
+        intermediate_target_gene_exp = sample_data.loc[sample_id,gene_id]
+        print('gene A exp is {}'.format(intermediate_target_gene_exp))
+        alpha = get_scale_factor(
+            target_gene_sorted, intermediate_target_gene_exp, percent_low, percent_high)
+        print('scale factor is {}'.format(alpha))
+        predict = baseline_encoded + alpha * offset_encoded
+
+        predict_encoded_df = pd.DataFrame(predict)
+        predicted_encoded_sample_data = predicted_encoded_sample_data.append(predict_encoded_df, ignore_index=True)
+        
+        # Decode prediction
+        predict_decoded = loaded_decoder_model.predict_on_batch(predict)
+        predict_df = pd.DataFrame(
+            predict_decoded, columns=sample_data.columns)
+        predicted_sample_data = predicted_sample_data.append(predict_df, ignore_index=True)
+
+    predicted_sample_data.set_index(sample_data.index, inplace=True)
+    predicted_encoded_sample_data.set_index(sample_data.index, inplace=True)
+    
+    # Output estimated gene experession values
+    predicted_sample_data.to_csv(predict_file, sep='\t')
+    predicted_encoded_sample_data.to_csv(predict_encoded_file, sep='\t')
+
+
+# In[17]:
+
+
 # Apply function 
 out_dir = os.path.join(base_dir, "output", analysis_name)
 encoded_dir = os.path.join(base_dir, "encoded", analysis_name)
 
 percent_low = 5
 percent_high = 95
-interpolate_in_vae_latent_space_AB(sim_data,
-                                   test_samples_sorted,
+interpolate_in_vae_latent_space_shiftA(sim_data,
+                                   A_exp_sample_modified_df,
                                    model_encoder_file,
                                    model_decoder_file,
                                    weights_encoder_file,
@@ -458,18 +595,18 @@ interpolate_in_vae_latent_space_AB(sim_data,
                                    out_dir)
 
 
-# In[17]:
+# In[18]:
 
 
 # Read dataframe with gene expression transformed
-predict_file = os.path.join(base_dir, "output", analysis_name, "predicted_gene_exp.txt")
+predict_file = os.path.join(base_dir, "output", analysis_name, "shifted_predicted_gene_exp.txt")
 predict_gene_exp = pd.read_table(predict_file, header=0, index_col=0)
 
 print(predict_gene_exp.shape)
 predict_gene_exp.head()
 
 
-# In[ ]:
+# In[19]:
 
 
 # Get the means of B genes
@@ -484,18 +621,20 @@ geneSetB_mean = geneSetB_exp.mean(axis=1)
 geneSetB_mean.head()
 
 
-# In[ ]:
+# In[20]:
 
 
 # Join original expression of transformed A and mean(transformed expression of B)
 predict_A_exp = predict_gene_exp[rep_gene_A]
 predict_B_mean_exp = geneSetB_mean
+
 A_and_B_predict_df = pd.merge(predict_A_exp.to_frame('gene A transformed'),
                       predict_B_mean_exp.to_frame('mean gene B transformed'),
-                      left_index=True, right_i
+                      left_index=True, right_index=True)
+A_and_B_predict_df.head()
 
 
-# In[ ]:
+# In[21]:
 
 
 # Plot
