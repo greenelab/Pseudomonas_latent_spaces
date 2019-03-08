@@ -530,37 +530,22 @@ def interpolate_in_vae_latent_space_shiftA(all_data,
     loaded_model.load_weights(weights_encoder_file)
     loaded_decoder_model.load_weights(weights_decoder_file)
     
-    # Sort target gene data by expression (lowest --> highest)
-    target_gene_sorted = target_gene_data.sort_values()
-
-    lowest_file = os.path.join(encoded_dir, "lowest_encoded_vae.txt")
-    low_exp_encoded = pd.read_table(lowest_file, header=0, index_col=0)
-    
-    # Average gene expression across samples in each extreme group
-    lowest_mean_encoded = low_exp_encoded.mean(axis=0)
-
-    # Format and rename as "baseline"
-    baseline_encoded = pd.DataFrame(
-        lowest_mean_encoded, index=offset_encoded.columns).T
-    
     # Initialize dataframe for predicted expression of sampled data
     predicted_sample_data = pd.DataFrame(columns=sample_data.columns)
     predicted_encoded_sample_data = pd.DataFrame()
     
     sample_ids = sample_data.index
     for sample_id in sample_ids:
-        intermediate_target_gene_exp = sample_data.loc[sample_id,gene_id]
-        print('gene A exp is {}'.format(intermediate_target_gene_exp))
-        alpha = get_scale_factor(
-            target_gene_sorted, intermediate_target_gene_exp, percent_low, percent_high)
-        print('scale factor is {}'.format(alpha))
-        predict = baseline_encoded + alpha * offset_encoded
+        sample_exp = sample_data.loc[sample_id].to_frame().T
+        
+        # Use trained model to encode expression data into SAME latent space
+        predict = loaded_model.predict_on_batch(sample_exp)
 
         predict_encoded_df = pd.DataFrame(predict)
         predicted_encoded_sample_data = predicted_encoded_sample_data.append(predict_encoded_df, ignore_index=True)
         
         # Decode prediction
-        predict_decoded = loaded_decoder_model.predict_on_batch(predict)
+        predict_decoded = loaded_decoder_model.predict_on_batch(predict_encoded_df)
         predict_df = pd.DataFrame(
             predict_decoded, columns=sample_data.columns)
         predicted_sample_data = predicted_sample_data.append(predict_df, ignore_index=True)
@@ -621,7 +606,60 @@ geneSetB_mean = geneSetB_exp.mean(axis=1)
 geneSetB_mean.head()
 
 
+# **Plot:** Original A vs Transformed A
+
 # In[20]:
+
+
+# Join original expression of A and transformed expression of A
+original_A_exp = A_exp_sample_modified_df[rep_gene_A]
+predict_A_exp = predict_gene_exp[rep_gene_A]
+
+original_A_vs_transformed_A_df = pd.merge(original_A_exp.to_frame('gene A untransformed'),
+                      predict_A_exp.to_frame('gene A transformed'),
+                      left_index=True, right_index=True)
+
+original_A_vs_transformed_A_df.head()
+
+
+# In[21]:
+
+
+# Plot
+sns.regplot(x='gene A untransformed',
+            y='gene A transformed',
+           data = original_A_vs_transformed_A_df)
+
+
+# **Plot:** Original A vs Mean(Transformed B)
+
+# In[22]:
+
+
+# Join original expression of A and mean(transformed expression of B)
+original_A_exp = A_exp_sample_modified_df[rep_gene_A]
+predict_B_mean_exp = geneSetB_mean
+
+original_A_vs_transformed_B_df = pd.merge(original_A_exp.to_frame('gene A untransformed'),
+                      predict_B_mean_exp.to_frame('mean gene B transformed'),
+                      left_index=True, right_index=True)
+
+original_A_vs_transformed_B_df.head()
+
+
+# In[23]:
+
+
+# Plot
+# A before transformation vs B after transformation
+sns.regplot(x='gene A untransformed',
+            y='mean gene B transformed',
+           data = original_A_vs_transformed_B_df)
+
+
+# **Plot:** Transformed A vs Mean(Transformed B)
+
+# In[24]:
 
 
 # Join original expression of transformed A and mean(transformed expression of B)
@@ -634,7 +672,7 @@ A_and_B_predict_df = pd.merge(predict_A_exp.to_frame('gene A transformed'),
 A_and_B_predict_df.head()
 
 
-# In[21]:
+# In[25]:
 
 
 # Plot
