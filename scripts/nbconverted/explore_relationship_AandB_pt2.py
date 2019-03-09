@@ -43,18 +43,73 @@ seed(randomState)
 base_dir = os.path.dirname(os.getcwd())
 analysis_name = 'sim_AB_2775_300_v2'
 
-sim_data_file = os.path.join(base_dir, "data", analysis_name, "train_model_input.txt.xz")
-A_file = os.path.join(base_dir, "data", analysis_name, "geneSetA.txt")
-B_file = os.path.join(base_dir, "data", analysis_name, "geneSetB.txt")
+sim_data_file = os.path.join(
+    base_dir,
+    "data",
+    analysis_name,
+    "train_model_input.txt.xz"
+)
 
-offset_vae_file = os.path.join(os.path.dirname(os.getcwd()), "encoded", analysis_name, "offset_latent_space_vae.txt")
+A_file = os.path.join(
+    base_dir,
+    "data",
+    analysis_name,
+    "geneSetA.txt"
+)
 
-weight_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "VAE_weight_matrix.txt")
+B_file = os.path.join(
+    base_dir,
+    "data",
+    analysis_name,
+    "geneSetB.txt"
+)
 
-model_encoder_file = glob.glob(os.path.join(base_dir, "models", analysis_name, "*_encoder_model.h5"))[0]
-weights_encoder_file = glob.glob(os.path.join(base_dir, "models", analysis_name, "*_encoder_weights.h5"))[0]
-model_decoder_file = glob.glob(os.path.join(base_dir, "models", analysis_name, "*_decoder_model.h5"))[0]
-weights_decoder_file = glob.glob(os.path.join(base_dir, "models", analysis_name, "*_decoder_weights.h5"))[0]
+offset_vae_file = os.path.join(
+    os.path.dirname(os.getcwd()), 
+    "encoded",
+    analysis_name, 
+    "offset_latent_space_vae.txt"
+)
+
+weight_file = os.path.join(
+    os.path.dirname(os.getcwd()),
+    "data",
+    analysis_name,
+    "VAE_weight_matrix.txt"
+)
+
+model_encoder_file = glob.glob(os.path.join(
+    base_dir,
+    "models",
+    analysis_name,
+    "*_encoder_model.h5"))[0]
+
+weights_encoder_file = glob.glob(
+    os.path.join(
+        base_dir,
+        "models",
+        analysis_name,
+        "*_encoder_weights.h5"
+    )
+)[0]
+
+model_decoder_file = glob.glob(
+    os.path.join(
+        base_dir,
+        "models",
+        analysis_name, 
+        "*_decoder_model.h5"
+    )
+)[0]
+
+weights_decoder_file = glob.glob(
+    os.path.join(
+        base_dir,
+        "models", 
+        analysis_name, 
+        "*_decoder_weights.h5"
+    )
+)[0]
 
 
 # In[4]:
@@ -264,13 +319,22 @@ def interpolate_in_vae_latent_space_AB(all_data,
         predict = baseline_encoded + alpha * offset_encoded
 
         predict_encoded_df = pd.DataFrame(predict)
-        predicted_encoded_sample_data = predicted_encoded_sample_data.append(predict_encoded_df, ignore_index=True)
+        
+        predicted_encoded_sample_data = (
+            predicted_encoded_sample_data
+            .append(predict_encoded_df, ignore_index=True)
+        )
         
         # Decode prediction
         predict_decoded = loaded_decoder_model.predict_on_batch(predict)
+        
         predict_df = pd.DataFrame(
             predict_decoded, columns=sample_data.columns)
-        predicted_sample_data = predicted_sample_data.append(predict_df, ignore_index=True)
+        
+        predicted_sample_data = (
+            predicted_sample_data
+            .append(predict_df, ignore_index=True)
+        )
 
     predicted_sample_data.set_index(sample_data.index, inplace=True)
     predicted_encoded_sample_data.set_index(sample_data.index, inplace=True)
@@ -542,13 +606,21 @@ def interpolate_in_vae_latent_space_shiftA(all_data,
         predict = loaded_model.predict_on_batch(sample_exp)
 
         predict_encoded_df = pd.DataFrame(predict)
-        predicted_encoded_sample_data = predicted_encoded_sample_data.append(predict_encoded_df, ignore_index=True)
+        
+        predicted_encoded_sample_data = (
+            predicted_encoded_sample_data
+            .append(predict_encoded_df, ignore_index=True)
+        )
         
         # Decode prediction
         predict_decoded = loaded_decoder_model.predict_on_batch(predict_encoded_df)
         predict_df = pd.DataFrame(
             predict_decoded, columns=sample_data.columns)
-        predicted_sample_data = predicted_sample_data.append(predict_df, ignore_index=True)
+        
+        predicted_sample_data = (
+            predicted_sample_data
+            .append(predict_df, ignore_index=True)
+        )
 
     predicted_sample_data.set_index(sample_data.index, inplace=True)
     predicted_encoded_sample_data.set_index(sample_data.index, inplace=True)
