@@ -56,7 +56,7 @@ seed(randomState)
 geneSetA_size = 100
 
 # Size of the gene set that will be regulated by gene A
-geneSetB_size = 1000 
+geneSetB_size = 100 
 
 # Percentage to upregulate each gene in set B
 effect_size = 0.5
@@ -65,7 +65,7 @@ effect_size = 0.5
 thresholdA = 0.5
 
 # Name of analysis
-analysis_name = 'sim_AB_simplified_down'
+analysis_name = 'sim_balancedAB_100_2latent'
 
 
 # In[3]:
@@ -204,7 +204,7 @@ for sample_id in data.index:
         
         # Scale genes by some fixed percentage
         for gene in geneSetB:
-            data.loc[sample_id,gene] = (1-effect_size)*data.loc[sample_id,gene]            
+            data.loc[sample_id,gene] = (1+effect_size)*data.loc[sample_id,gene]            
             
 # if any exceed 1 then set to 1 since gene expression is normalized
 data[data>=1.0] = 1.0
@@ -263,7 +263,7 @@ geneA_only.to_csv(geneA_file, sep='\t', float_format="%.5g")
 # In[15]:
 
 
-get_ipython().run_cell_magic('time', '', '# Parameters to train nonlinear (VAE) compression method\nlearning_rate = 0.001\nbatch_size = 100\nepochs = 200\nkappa = 0.01\nintermediate_dim = 500\nlatent_dim = 100\nepsilon_std = 1.0\nnum_PCs = latent_dim\n\nbase_dir = os.path.dirname(os.getcwd())\n\n# Train nonlinear (VAE)\nvae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,\n                        latent_dim, epsilon_std, base_dir, analysis_name)\n# Train linear (PCA)\npca.pca_model(base_dir, analysis_name, num_PCs)')
+get_ipython().run_cell_magic('time', '', '# Parameters to train nonlinear (VAE) compression method\nlearning_rate = 0.001\nbatch_size = 100\nepochs = 100\nkappa = 0.01\nintermediate_dim = 100\nlatent_dim = 2\nepsilon_std = 1.0\nnum_PCs = latent_dim\n\nbase_dir = os.path.dirname(os.getcwd())\n\n# Train nonlinear (VAE)\nvae.tybalt_2layer_model(learning_rate, batch_size, epochs, kappa, intermediate_dim,\n                        latent_dim, epsilon_std, base_dir, analysis_name)\n# Train linear (PCA)\npca.pca_model(base_dir, analysis_name, num_PCs)')
 
 
 # ## Prediction
