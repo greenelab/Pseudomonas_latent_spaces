@@ -1,0 +1,6 @@
+std of gene set B: 0.1
+size of gene set A: 1000
+std of gene set A: 0.4
+mean of gene set B: 0.8
+mean of gene set A: 0.5
+size of gene set B: 1000
