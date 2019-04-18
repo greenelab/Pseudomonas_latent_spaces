@@ -24,5 +24,6 @@ dependencies:
 - conda-forge::graphviz=2.38.0
 - conda-forge::python-graphviz=0.8
 - conda-forge::libiconv=1.15
+- conda-forge::umap-learn
 - pip:
   - keras-tqdm==2.0.1

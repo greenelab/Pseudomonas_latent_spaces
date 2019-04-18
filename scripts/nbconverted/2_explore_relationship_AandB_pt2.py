@@ -41,7 +41,7 @@ seed(randomState)
 
 # Load 
 base_dir = os.path.dirname(os.getcwd())
-analysis_name = 'sim_balancedAB_100_2latent'
+analysis_name = 'sim_balancedAB_2latent'
 
 sim_data_file = os.path.join(
     base_dir,
@@ -759,7 +759,7 @@ sns.regplot(x='gene A transformed',
 # 
 # We will perform the same analysis as before but this time we will manually shift B genes from being below the activation threshold to being above it and see how the gene expression data is reconstructed
 
-# In[ ]:
+# In[26]:
 
 
 # Artificially shift gene B expression
@@ -791,7 +791,7 @@ A_exp_sample_modified_df.head()
 
 # **Plot:** Mean(Untransformed B) vs Mean(Transformed B)
 
-# In[26]:
+# In[27]:
 
 
 # Get the means of B genes
@@ -806,7 +806,7 @@ geneSetB_original_mean = geneSetB_exp.mean(axis=1)
 geneSetB_original_mean.head()
 
 
-# In[27]:
+# In[28]:
 
 
 # Join original expression of transformed A and mean(transformed expression of B)
@@ -819,7 +819,7 @@ original_B_vs_transformed_B_df = pd.merge(original_B_exp.to_frame('mean gene B u
 original_B_vs_transformed_B_df.head()
 
 
-# In[28]:
+# In[29]:
 
 
 # Plot
