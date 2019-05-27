@@ -41,7 +41,7 @@ seed(randomState)
 
 # Load 
 base_dir = os.path.dirname(os.getcwd())
-analysis_name = 'sim_AB_simplified_down'
+analysis_name = 'sim_balancedAB_2latent'
 
 sim_data_file = os.path.join(
     base_dir,
@@ -469,6 +469,8 @@ sns.regplot(x='gene A transformed',
 # How is B changing with respect to A after shifting input expression and then applying our latent space transformation?
 # 
 # Here we are only changing samples **before** they have been encoded into the latent space and then we apply our latent space transformation.  If we compare these trends with those from #2 module, which show what the decoder is supposedly learning, then we can conclude what the encoder is learning.
+# 
+# In order to test this we manually shift A genes from being below the activation threshold to being above it and see how the gene expression data is reconstructed
 
 # In[15]:
 
@@ -674,8 +676,8 @@ geneSetB_ls = geneSetB['gene id'].values.tolist()
 geneSetB_exp = predict_gene_exp[geneSetB_ls]
 
 # Get the mean for each sample
-geneSetB_mean = geneSetB_exp.mean(axis=1)
-geneSetB_mean.head()
+geneSetB_transformed_mean = geneSetB_exp.mean(axis=1)
+geneSetB_transformed_mean.head()
 
 
 # **Plot:** Original A vs Transformed A
@@ -710,7 +712,7 @@ sns.regplot(x='gene A untransformed',
 
 # Join original expression of A and mean(transformed expression of B)
 original_A_exp = A_exp_sample_modified_df[rep_gene_A]
-predict_B_mean_exp = geneSetB_mean
+predict_B_mean_exp = geneSetB_transformed_mean
 
 original_A_vs_transformed_B_df = pd.merge(original_A_exp.to_frame('gene A untransformed'),
                       predict_B_mean_exp.to_frame('mean gene B transformed'),
@@ -736,7 +738,7 @@ sns.regplot(x='gene A untransformed',
 
 # Join original expression of transformed A and mean(transformed expression of B)
 predict_A_exp = predict_gene_exp[rep_gene_A]
-predict_B_mean_exp = geneSetB_mean
+predict_B_mean_exp = geneSetB_transformed_mean
 
 A_and_B_predict_df = pd.merge(predict_A_exp.to_frame('gene A transformed'),
                       predict_B_mean_exp.to_frame('mean gene B transformed'),
@@ -751,4 +753,77 @@ A_and_B_predict_df.head()
 sns.regplot(x='gene A transformed',
             y='mean gene B transformed',
            data = A_and_B_predict_df)
+
+
+# ## 4.  Trend of gene B with respect to A (encoder)
+# 
+# We will perform the same analysis as before but this time we will manually shift B genes from being below the activation threshold to being above it and see how the gene expression data is reconstructed
+
+# In[26]:
+
+
+# Artificially shift gene B expression
+
+# Get single sample
+test_sample = test_samples_sorted.index[0]
+print(test_sample)
+
+# Sample with original value of gene A
+A_exp_sample = test_samples_sorted.loc[test_sample]
+
+A_exp_sample_modified_df = pd.DataFrame()
+
+A_exp_sample_modified_df.append(A_exp_sample, ignore_index=True)
+
+# Convert dataframe with gene ids to list
+geneSetA_ls = geneSetA['gene id'].values.tolist()
+
+# Artificially shift genes in set A
+new_A_exp = np.linspace(0.41, 0.60, num=100)
+
+for i in new_A_exp:
+    test_samples_sorted.loc[test_sample,geneSetA_ls] = i
+    A_exp_sample = test_samples_sorted.loc[test_sample]
+    A_exp_sample_modified_df = A_exp_sample_modified_df.append(A_exp_sample, ignore_index=True)
+
+A_exp_sample_modified_df.head()
+
+
+# **Plot:** Mean(Untransformed B) vs Mean(Transformed B)
+
+# In[27]:
+
+
+# Get the means of B genes
+
+# Convert dataframe with gene ids to list
+geneSetB_ls = geneSetB['gene id'].values.tolist()
+
+geneSetB_exp = A_exp_sample_modified_df[geneSetB_ls]
+
+# Get the mean for each sample
+geneSetB_original_mean = geneSetB_exp.mean(axis=1)
+geneSetB_original_mean.head()
+
+
+# In[28]:
+
+
+# Join original expression of transformed A and mean(transformed expression of B)
+original_B_exp = geneSetB_original_mean
+predict_B_mean_exp = geneSetB_transformed_mean
+
+original_B_vs_transformed_B_df = pd.merge(original_B_exp.to_frame('mean gene B untransformed'),
+                      predict_B_mean_exp.to_frame('mean gene B transformed'),
+                      left_index=True, right_index=True)
+original_B_vs_transformed_B_df.head()
+
+
+# In[29]:
+
+
+# Plot
+sns.regplot(x='mean gene B untransformed',
+            y='mean gene B transformed',
+           data = original_B_vs_transformed_B_df)
 
