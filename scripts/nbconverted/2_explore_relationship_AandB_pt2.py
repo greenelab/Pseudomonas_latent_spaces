@@ -18,6 +18,7 @@ import pandas as pd
 import numpy as np
 import random
 import glob
+import pickle
 import seaborn as sns
 from keras.models import model_from_json, load_model
 from functions import utils
@@ -41,7 +42,7 @@ seed(randomState)
 
 # Load 
 base_dir = os.path.dirname(os.getcwd())
-analysis_name = 'sim_balancedAB_2latent'
+analysis_name = 'sim_balancedAB_100_2latent'
 
 sim_data_file = os.path.join(
     base_dir,
@@ -115,6 +116,24 @@ weights_decoder_file = glob.glob(
 # In[4]:
 
 
+# Output image files
+positive_trend_file = os.path.join(
+    base_dir,
+    "viz",
+    analysis_name,
+    "input_A_B.png"
+)
+model_trend_file = os.path.join(
+    base_dir,
+    "viz",
+    analysis_name,
+    "model_A_transformB.png"
+)
+
+
+# In[5]:
+
+
 # Read data
 sim_data = pd.read_table(sim_data_file, index_col=0, header=0, compression='xz')
 geneSetA = pd.read_table(A_file, header=0, index_col=0)
@@ -124,7 +143,7 @@ print(sim_data.shape)
 sim_data.head()
 
 
-# In[5]:
+# In[6]:
 
 
 # Select samples that have expression of gene A around the threshold 
@@ -150,7 +169,7 @@ test_samples_sorted.head()
 # 
 # Plot gene expression of A vs mean(gene B expression).  This plot will serve as a reference against later plots that will show the relationship between A and B after transforming the data (i.e. after the data has been fed through the autoencoder)
 
-# In[6]:
+# In[7]:
 
 
 # Get the means of B genes
@@ -165,7 +184,7 @@ geneSetB_mean = geneSetB_exp.mean(axis=1)
 geneSetB_mean.head()
 
 
-# In[7]:
+# In[8]:
 
 
 # Join original expression of A and mean(transformed expression of B)
@@ -183,13 +202,15 @@ A_and_B_before_df.head()
 # 
 # So we see a step function relationship between the expression of genes in group A and the expression of genes in group B.  With a threshold of 0.5 we can see that the expression of genes in B are upregulated.
 
-# In[8]:
+# In[9]:
 
 
 # Plot
-sns.regplot(x='gene A untransformed',
+positive_signal = sns.regplot(x='gene A untransformed',
             y='mean gene B untransformed',
            data = A_and_B_before_df)
+fig = positive_signal.get_figure()
+fig.savefig(positive_trend_file, dpi=300)
 
 
 # ## 2.  Trend of gene B with respect to A (decoder)
@@ -198,7 +219,7 @@ sns.regplot(x='gene A untransformed',
 # 
 # Here we are only changing samples **after** they have been encoded into the latent space and we apply our latent space transformation.  Therefore, any trends that we observe we conclude that this relationship is what the decoder is learning.
 
-# In[9]:
+# In[10]:
 
 
 # Define function to apply latent space transformation and output reconstructed data
@@ -389,7 +410,7 @@ def get_scale_factor(target_gene_sorted, expression_profile,
     return scale_factor
 
 
-# In[10]:
+# In[11]:
 
 
 # Apply function 
@@ -416,7 +437,7 @@ interpolate_in_vae_latent_space_AB(sim_data,
 # 
 # Q: What is the relationship between genes in set A and B?  As the expression of A varies how does the expression of B vary?
 
-# In[11]:
+# In[12]:
 
 
 # Read dataframe with gene expression transformed
@@ -427,7 +448,7 @@ print(predict_gene_exp.shape)
 predict_gene_exp.head()
 
 
-# In[12]:
+# In[13]:
 
 
 # Get the means of B genes
@@ -442,24 +463,24 @@ geneSetB_mean = geneSetB_exp.mean(axis=1)
 geneSetB_mean.head()
 
 
-# In[13]:
+# In[14]:
 
 
 # Join original expression of transformed A and mean(transformed expression of B)
 predict_A_exp = predict_gene_exp[rep_gene_A]
 predict_B_mean_exp = geneSetB_mean
 
-A_and_B_predict_df = pd.merge(predict_A_exp.to_frame('gene A transformed'),
+A_and_B_predict_df = pd.merge(original_A_exp.to_frame('gene A untransformed'),
                       predict_B_mean_exp.to_frame('mean gene B transformed'),
                       left_index=True, right_index=True)
 A_and_B_predict_df.head()
 
 
-# In[14]:
+# In[15]:
 
 
 # Plot
-sns.regplot(x='gene A transformed',
+sns.regplot(x='gene A untransformed',
             y='mean gene B transformed',
            data = A_and_B_predict_df)
 
@@ -472,7 +493,7 @@ sns.regplot(x='gene A transformed',
 # 
 # In order to test this we manually shift A genes from being below the activation threshold to being above it and see how the gene expression data is reconstructed
 
-# In[15]:
+# In[16]:
 
 
 # Artificially shift gene A expression
@@ -502,7 +523,7 @@ for i in new_A_exp:
 A_exp_sample_modified_df.head()
 
 
-# In[16]:
+# In[17]:
 
 
 # Define function to apply latent space transformation to SHIFTED data and output reconstructed data
@@ -632,12 +653,124 @@ def interpolate_in_vae_latent_space_shiftA(all_data,
     predicted_encoded_sample_data.to_csv(predict_encoded_file, sep='\t')
 
 
-# In[17]:
+# In[18]:
+
+
+# Define function to apply latent space transformation to SHIFTED data and output reconstructed data
+
+def interpolate_in_pca_latent_space_shiftA(all_data, 
+                                       sample_data,
+                                       model_dir,
+                                       encoded_dir,
+                                       gene_id,
+                                       percent_low,
+                                       percent_high,
+                                       out_dir):
+    """
+    interpolate_in_pca_latent_space(data_dir: string,
+                                    model_dir: string,
+                                    encoded_dir: string,
+                                    gene_id: string,
+                                    out_dir: string,
+                                    percent_low: integer,
+                                    percent_high: integer):
+
+    input:
+        data_dir: directory containing the raw gene expression data and the offset vector
+
+        model_dir: directory containing the learned vae models
+
+        encoded_dir: directory to use to output offset vector to 
+
+        gene_id: gene you are using as the "phenotype" to sort samples by 
+
+                 This gene is referred to as "target_gene" in comments below
+
+        out_dir: directory to output predicted gene expression to
+
+        percent_low: integer between 0 and 1
+
+        percent_high: integer between 0 and 1
+
+    computation:
+        1.  Sort samples based on the expression level of the target gene defined by the user
+        2.  Samples are encoded into PCA latent space
+        3.  We predict the expression profile of the OTHER genes at a given level of target gene 
+            expression by adding a scale factor of offset vector to the sample
+
+            The scale factor depends on the distance along the target gene expression gradient
+            the sample is.  For example the range along the target gene expression is from 0 to 1.  
+            If the sample of interest has a target gene expression of 0.3 then our prediction
+            for the gene expression of all other genes is equal to the gene expression corresponding
+            to the target gene expression=0 + 0.3*offset latent vector
+        3.  Prediction is decoded back into gene space
+        4.  This computation is repeated for all samples 
+
+    output: 
+         1. predicted expression profile per sample (intermediate samples x 2 statistical scores --> correlation and pvalue)
+         2. target gene expression sorted by expression level for reference when plotting
+    """
+
+    # Load arguments
+    #offset_file = os.path.join(encoded_dir, "offset_latent_space_vae.txt")
+    model_file = os.path.join(model_dir, "pca_model.pkl")
+
+    # Output file
+    predict_file = os.path.join(out_dir, "shifted_predicted_gene_exp.txt")
+    predict_encoded_file = os.path.join(out_dir, "shifted_predicted_encoded_gene_exp.txt")
+
+    # Read in data
+    target_gene_data = all_data[gene_id]
+    #offset_encoded = pd.read_table(offset_file, header=0, index_col=0)    
+    
+    # load pca model
+    infile = open(model_file, 'rb')
+    pca = pickle.load(infile)
+    infile.close()
+    
+    # Initialize dataframe for predicted expression of sampled data
+    predicted_sample_data = pd.DataFrame(columns=sample_data.columns)
+    predicted_encoded_sample_data = pd.DataFrame()
+    
+    sample_ids = sample_data.index
+    for sample_id in sample_ids:
+        sample_exp = sample_data.loc[sample_id].to_frame().T
+        
+        # Use trained model to encode expression data into SAME latent space
+        predict = pca.transform(sample_exp)
+
+        predict_encoded_df = pd.DataFrame(predict)
+        
+        predicted_encoded_sample_data = (
+            predicted_encoded_sample_data
+            .append(predict_encoded_df, ignore_index=True)
+        )
+        
+        # Decode prediction
+        predict_decoded = pca.inverse_transform(predict_encoded_df)
+        predict_df = pd.DataFrame(
+            predict_decoded, columns=sample_data.columns)
+        
+        predicted_sample_data = (
+            predicted_sample_data
+            .append(predict_df, ignore_index=True)
+        )
+
+    predicted_sample_data.set_index(sample_data.index, inplace=True)
+    predicted_encoded_sample_data.set_index(sample_data.index, inplace=True)
+    
+    # Output estimated gene experession values
+    predicted_sample_data.to_csv(predict_file, sep='\t')
+    predicted_encoded_sample_data.to_csv(predict_encoded_file, sep='\t')
+
+
+# In[19]:
 
 
 # Apply function 
 out_dir = os.path.join(base_dir, "output", analysis_name)
 encoded_dir = os.path.join(base_dir, "encoded", analysis_name)
+model_dir = os.path.join(base_dir, "models", analysis_name)
 
 percent_low = 5
 percent_high = 95
@@ -653,8 +786,17 @@ interpolate_in_vae_latent_space_shiftA(sim_data,
                                    percent_high,
                                    out_dir)
 
+#interpolate_in_pca_latent_space_shiftA(sim_data,
+#                                   A_exp_sample_modified_df,
+#                                   model_dir,
+#                                   encoded_dir,
+#                                   rep_gene_A,
+#                                   percent_low,
+#                                   percent_high,
+#                                   out_dir)
 
-# In[18]:
+
+# In[20]:
 
 
 # Read dataframe with gene expression transformed
@@ -665,7 +807,7 @@ print(predict_gene_exp.shape)
 predict_gene_exp.head()
 
 
-# In[19]:
+# In[21]:
 
 
 # Get the means of B genes
@@ -682,7 +824,7 @@ geneSetB_transformed_mean.head()
 
 # **Plot:** Original A vs Transformed A
 
-# In[20]:
+# In[22]:
 
 
 # Join original expression of A and transformed expression of A
@@ -696,7 +838,7 @@ original_A_vs_transformed_A_df = pd.merge(original_A_exp.to_frame('gene A untran
 original_A_vs_transformed_A_df.head()
 
 
-# In[21]:
+# In[23]:
 
 
 # Plot
@@ -707,7 +849,7 @@ sns.regplot(x='gene A untransformed',
 
 # **Plot:** Original A vs Mean(Transformed B)
 
-# In[22]:
+# In[24]:
 
 
 # Join original expression of A and mean(transformed expression of B)
@@ -721,19 +863,21 @@ original_A_vs_transformed_B_df = pd.merge(original_A_exp.to_frame('gene A untran
 original_A_vs_transformed_B_df.head()
 
 
-# In[23]:
+# In[25]:
 
 
 # Plot
 # A before transformation vs B after transformation
-sns.regplot(x='gene A untransformed',
+A_transformB = sns.regplot(x='gene A untransformed',
             y='mean gene B transformed',
            data = original_A_vs_transformed_B_df)
+fig = A_transformB.get_figure()
+fig.savefig(model_trend_file, dpi=300)
 
 
 # **Plot:** Transformed A vs Mean(Transformed B)
 
-# In[24]:
+# In[26]:
 
 
 # Join original expression of transformed A and mean(transformed expression of B)
@@ -746,7 +890,7 @@ A_and_B_predict_df = pd.merge(predict_A_exp.to_frame('gene A transformed'),
 A_and_B_predict_df.head()
 
 
-# In[25]:
+# In[27]:
 
 
 # Plot
@@ -759,7 +903,7 @@ sns.regplot(x='gene A transformed',
 # 
 # We will perform the same analysis as before but this time we will manually shift B genes from being below the activation threshold to being above it and see how the gene expression data is reconstructed
 
-# In[26]:
+# In[28]:
 
 
 # Artificially shift gene B expression
@@ -791,7 +935,7 @@ A_exp_sample_modified_df.head()
 
 # **Plot:** Mean(Untransformed B) vs Mean(Transformed B)
 
-# In[27]:
+# In[29]:
 
 
 # Get the means of B genes
@@ -806,7 +950,7 @@ geneSetB_original_mean = geneSetB_exp.mean(axis=1)
 geneSetB_original_mean.head()
 
 
-# In[28]:
+# In[30]:
 
 
 # Join original expression of transformed A and mean(transformed expression of B)
@@ -819,7 +963,7 @@ original_B_vs_transformed_B_df = pd.merge(original_B_exp.to_frame('mean gene B u
 original_B_vs_transformed_B_df.head()
 
 
-# In[29]:
+# In[31]:
 
 
 # Plot
