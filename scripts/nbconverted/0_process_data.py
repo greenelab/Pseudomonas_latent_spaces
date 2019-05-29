@@ -28,14 +28,38 @@ seed(randomState)
 # 
 # Data downloaded from ADAGE repository [ADAGE](https://github.com/greenelab/adage).  
 # 
-# *data*
+# ```
+# data 
+# ```
 # 1. Raw data was downloaded from ArrayExpress
 # 2. Use [RMA](https://www.rdocumentation.org/packages/affy/versions/1.50.0/topics/rma) bioconductor library to convert raw array data to log 2 gene expression data that has been quantile normalized.
 # 3. Only keep PA genes, remove control genes
 # 
-# *normalized_data*
+# ```
+# normalized_data
+# ```
 # 1. Use data from above
 # 2. Normalize each gene to be between 0 and 1
+
+# ## About Affymetrix GeneChip processing
+# 
+# **Measurements**
+# mRNA samples samples are labeled with flouresence and hybridized to GeneChip probe array.  The probe array is then scanned and the flouresence intensity of each probe (or feature) is measured.  A trasncript is represented by a probe set (~11-20 pairs of probes - see explanation of pairs below).  The probe set intensity forms the expression measure for a given transcript.
+# 
+# **Array Design**
+# Two probes: 1) probe is completely complementary to target sequence, perfect match probe (PM) and 2) probe contains a single mismatch to the target sequence in the middle of the probe, mismatch probe(MM).  A probe pair is (PM, MM)  
+# 
+# from [The Affymetrix GeneChip Platform: An Overview](https://www.sciencedirect.com/science/article/pii/S0076687906100014?via%3Dihub#fig0001)
+# 
+# **Robust multiarray average (rma)**
+# 
+# 1. Assuming PM = background + signal we want to correct for background signal, returns E[signal|background+signal] assuming signal~exponential and background~normal.
+# 2. Use quantile normalization is to make the distribution of probe intensities the same across arrays.  The steps are 1) for each array, rank the probe intensity from lowest to highest, 2) For each array rearrange probe intensity values from lowest to highest, 3) Take the average across arrays for each probe and asssign rank, 4) replace ranks from (1) with mean values.  Example from [Quantile Normalization wiki](https://en.wikipedia.org/wiki/Quantile_normalization)   
+# 3. Calculating the probe set intensity by averaging PM-MM across probes in probe set and log2 transform, Y.  Fit regression model to Y (probe set intensity) = probe affinity effect + *log scale expression level* + error
+# 
+# from [Exploration, normalization, and summaries of high density oligonucleotide array probe level data](https://academic.oup.com/biostatistics/article/4/2/249/245074)
+# 
+# **Alternative normalization methods**
 
 # In[2]:
 
@@ -80,7 +104,7 @@ metadata
 #           strain
 #           growth_setting_1
 #           experiment
-metadata_field = 'growth_setting_1'
+metadata_field = 'medium'
 metadata_selected = metadata[metadata_field].to_frame()
 
 metadata_selected.head(5)
@@ -143,7 +167,7 @@ if metadata_field == 'growth_setting_1':
     metadata_selected_labeled = metadata_selected_labeled.astype({metadata_field: str})
     
 if metadata_field == 'medium':
-    values = ['LB', 'PIA', 'CF sputum', 'pyruvate', 'casamino acids']
+    values = ['LB', 'PIA', 'sputum', 'pyruvate', 'casamino acids']
     
     # Re-label metadata field based on subset of values
     metadata_vector = metadata[metadata_field]
@@ -173,18 +197,25 @@ if metadata_field == 'medium':
 # In[8]:
 
 
-metadata_selected_labeled
+# Get counts
+metadata_selected_labeled[metadata_selected_labeled[metadata_field] == 'sputum'].shape
 
 
 # In[9]:
 
 
-metadata_selected
+metadata_selected_labeled.head(10)
+
+
+# In[10]:
+
+
+metadata_selected.head(10)
 
 
 # ## Plot RMA normalized data
 
-# In[10]:
+# In[11]:
 
 
 data_labeled = data.merge(metadata_selected_labeled, left_index=True, right_index=True, how='inner')
@@ -192,7 +223,7 @@ print(data_labeled.shape)
 data_labeled.head(5)
 
 
-# In[11]:
+# In[12]:
 
 
 # UMAP embedding of raw gene space data
@@ -203,7 +234,7 @@ print(embedding_df.shape)
 embedding_df.head(5)
 
 
-# In[12]:
+# In[13]:
 
 
 # Plot
@@ -213,7 +244,7 @@ ggplot(aes(x='1',y='2', color='metadata'), data=embedding_df) +         geom_poi
 
 # ## Plot 0-1 normalized data
 
-# In[13]:
+# In[14]:
 
 
 normalized_data_labeled = normalized_data.merge(metadata_selected_labeled, left_index=True, right_index=True, how='inner')
@@ -221,7 +252,7 @@ print(normalized_data_labeled.shape)
 normalized_data_labeled.head(5)
 
 
-# In[14]:
+# In[15]:
 
 
 # UMAP embedding of raw gene space data
@@ -232,7 +263,7 @@ print(embedding_normalized_df.shape)
 embedding_normalized_df.head(5)
 
 
-# In[15]:
+# In[16]:
 
 
 # Plot
