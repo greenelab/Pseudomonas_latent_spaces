@@ -31,8 +31,8 @@ seed(randomState)
 # ```
 # data 
 # ```
-# 1. Raw data was downloaded from ArrayExpress
-# 2. Use [RMA](https://www.rdocumentation.org/packages/affy/versions/1.50.0/topics/rma) bioconductor library to convert raw array data to log 2 gene expression data that has been quantile normalized.
+# 1. Raw data was downloaded from ArrayExpress using Affymetrix GeneChip
+# 2. Use [RMA](https://www.rdocumentation.org/packages/affy/versions/1.50.0/topics/rma) bioconductor library to convert raw array data to log 2 gene expression data.
 # 3. Only keep PA genes, remove control genes
 # 
 # ```
@@ -104,7 +104,7 @@ metadata
 #           strain
 #           growth_setting_1
 #           experiment
-metadata_field = 'medium'
+metadata_field = 'growth_setting_1'
 metadata_selected = metadata[metadata_field].to_frame()
 
 metadata_selected.head(5)
@@ -267,5 +267,5 @@ embedding_normalized_df.head(5)
 
 
 # Plot
-ggplot(aes(x='1',y='2', color='metadata'), data=embedding_df) +     geom_point(alpha=0.5) +     scale_color_brewer(type='qual', palette='Set2')
+ggplot(aes(x='1',y='2', color='metadata'), data=embedding_normalized_df) +     geom_point(alpha=0.5) +     scale_color_brewer(type='qual', palette='Set2')
 
