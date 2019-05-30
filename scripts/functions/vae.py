@@ -35,7 +35,6 @@ def tybalt_2layer_model(
         epsilon_std,
         base_dir,
         analysis_name):
-
     """
     Train 2-layer Tybalt model using input dataset
 
@@ -317,7 +316,6 @@ def tybalt_2layer_model_multi(
         base_dir,
         analysis_name,
         seed_input):
-
     """
     Train 2-layer Tybalt model using input dataset
 
@@ -389,21 +387,21 @@ def tybalt_2layer_model_multi(
     beta = K.variable(0)
 
     stat_file = os.path.join(base_dir, "stats", analysis_name,
-                             "tybalt_2layer_{}latent_stats_seed" + str(seed_input) + ".tsv".format(latent_dim))
+                             "tybalt_2layer_latent_stats_seed" + str(seed_input) + ".tsv")
     hist_plot_file = os.path.join(
-        base_dir, "stats", analysis_name, "tybalt_2layer_{}latent_hist_seed" + str(seed_input) + ".png".format(latent_dim))
+        base_dir, "stats", analysis_name, "tybalt_2layer_latent_hist_seed" + str(seed_input) + ".png")
 
     encoded_file = os.path.join(base_dir, "encoded", analysis_name,
-                                "train_input_2layer_{}latent_encoded_seed" + str(seed_input) + ".txt".format(latent_dim))
+                                "train_input_2layer_latent_encoded_seed" + str(seed_input) + ".txt")
 
     model_encoder_file = os.path.join(base_dir, "models", analysis_name,
-                                      "tybalt_2layer_{}latent_encoder_model_seed" + str(seed_input) + ".h5".format(latent_dim))
+                                      "tybalt_2layer_latent_encoder_model_seed" + str(seed_input) + ".h5")
     weights_encoder_file = os.path.join(base_dir, "models", analysis_name,
-                                        "tybalt_2layer_{}latent_encoder_weights_seed" + str(seed_input) + ".h5".format(latent_dim))
+                                        "tybalt_2layer_latent_encoder_weights_seed" + str(seed_input) + ".h5")
     model_decoder_file = os.path.join(base_dir, "models", analysis_name,
-                                      "tybalt_2layer_{}latent_decoder_model_seed" + str(seed_input) + ".h5".format(latent_dim))
+                                      "tybalt_2layer_latent_decoder_model_seed" + str(seed_input) + ".h5")
     weights_decoder_file = os.path.join(base_dir, "models", analysis_name,
-                                        "tybalt_2layer_{}latent_decoder_weights_seed" + str(seed_input) + ".h5".format(latent_dim))
+                                        "tybalt_2layer_latent_decoder_weights_seed" + str(seed_input) + ".h5")
 
     # --------------------------------------------------------------------------------------------------------------------
     # Data initalizations
