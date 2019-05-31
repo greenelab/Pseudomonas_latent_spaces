@@ -1,31 +1,196 @@
 name: Pa_interpolate
 channels:
-- conda-forge
-- defaults
+  - anaconda
+  - conda-forge
+  - defaults
 dependencies:
-- conda-forge::python=3.5
-- conda-forge::keras=2.1.3
-- conda-forge::tensorflow=1.4.0
-- conda-forge::scikit-learn=0.19.1
-- conda-forge::pandas=0.22.0
-- conda-forge::numpy=1.12.1
-- conda-forge::statsmodels=0.8.0
-- conda-forge::numexpr=2.6.4
-- conda-forge::hdf5=1.10.1
-- conda-forge::six=1.11.0
-- conda-forge::matplotlib=2.1.2
-- conda-forge::seaborn=0.8.1
-- conda-forge::jupyter=1.0.0
-- conda-forge::ipykernel=4.8.1
-- conda-forge::ipywidgets=6.0.0
-- conda-forge::widgetsnbextension=2.0.0
-- conda-forge::nb_conda_kernels=2.1.0
-- anaconda::pydot=1.2.3
-- conda-forge::graphviz=2.38.0
-- conda-forge::python-graphviz=0.8
-- conda-forge::libiconv=1.15
-- conda-forge::umap-learn
-- conda-forge::r-ggplot2=2.2.1
-- conda-forge::r-irkernel=0.8.11
-- pip:
-  - keras-tqdm==2.0.1
+  - _r-mutex=1.0.0=anacondar_1
+  - absl-py=0.5.0=py_0
+  - astor=0.7.1=py_0
+  - backcall=0.1.0=py_0
+  - blas=1.1=openblas
+  - bleach=1.5.0=py35_0
+  - brewer2mpl=1.4.1=py_3
+  - bzip2=1.0.6=h14c3975_1002
+  - c-ares=1.15.0=h14c3975_1001
+  - ca-certificates=2019.1.23=0
+  - cairo=1.14.12=h80bd089_1005
+  - certifi=2018.8.24=py35_1
+  - curl=7.61.0=h93b3f91_2
+  - cycler=0.10.0=py_1
+  - dbus=1.13.2=h714fa37_1
+  - decorator=4.4.0=py_0
+  - defusedxml=0.5.0=py_1
+  - entrypoints=0.2.3=py35_2
+  - expat=2.2.5=hf484d3e_1002
+  - fontconfig=2.13.1=he4413a7_1000
+  - freetype=2.10.0=he983fc9_0
+  - gast=0.2.2=py_0
+  - gettext=0.19.8.1=hc5be6a0_1002
+  - ggplot=0.11.5=py_4
+  - glib=2.56.2=had28632_1001
+  - graphite2=1.3.13=hf484d3e_1000
+  - graphviz=2.38.0=hcf1ce16_1009
+  - grpcio=1.14.1=py35hd60e7a3_0
+  - gsl=2.2.1=blas_openblash47a8a8e_5
+  - gst-plugins-base=1.14.0=hbbd80ab_1
+  - gstreamer=1.14.0=hb453b48_1
+  - h5py=2.8.0=py35h470a237_0
+  - harfbuzz=1.9.0=he243708_1001
+  - hdf5=1.10.1=2
+  - html5lib=0.9999999=py35_0
+  - icu=58.2=hf484d3e_1000
+  - ipykernel=4.8.1=py35_0
+  - ipython=7.0.1=py35h24bf2e0_0
+  - ipython_genutils=0.2.0=py_1
+  - ipywidgets=6.0.0=py35_1
+  - jedi=0.12.1=py35_0
+  - jinja2=2.10.1=py_0
+  - jpeg=9c=h14c3975_1001
+  - jsonschema=2.6.0=py35_2
+  - jupyter=1.0.0=py_2
+  - jupyter_client=5.2.4=py_3
+  - jupyter_console=6.0.0=py_0
+  - jupyter_core=4.4.0=py_0
+  - keras=2.1.6=py35_0
+  - kiwisolver=1.0.1=py35h2d50403_2
+  - krb5=1.14.6=0
+  - libffi=3.2.1=he1b5a44_1006
+  - libgcc=7.2.0=h69d50b8_2
+  - libgcc-ng=8.2.0=hdf63c60_1
+  - libgfortran=3.0.0=1
+  - libgpuarray=0.7.6=h14c3975_1003
+  - libiconv=1.15=h516909a_1005
+  - libpng=1.6.37=hed695b0_0
+  - libprotobuf=3.6.0=hdbcaa40_1000
+  - libsodium=1.0.17=h516909a_0
+  - libssh2=1.8.0=h1ad7b7a_1003
+  - libstdcxx-ng=8.2.0=hdf63c60_1
+  - libtiff=4.0.10=h648cc4a_1001
+  - libtool=2.4.6=h14c3975_1002
+  - libuuid=2.32.1=h14c3975_1000
+  - libxcb=1.13=h14c3975_1002
+  - libxml2=2.9.9=h13577e0_0
+  - llvmlite=0.25.0=py35_0
+  - mako=1.0.10=py_0
+  - markdown=2.6.11=py_0
+  - markupsafe=1.0=py35h470a237_1
+  - matplotlib=3.0.0=py35h5429711_0
+  - mistune=0.8.3=py35h470a237_2
+  - nb_conda_kernels=2.1.0=py35_0
+  - nbconvert=5.5.0=py_0
+  - nbformat=4.4.0=py_1
+  - ncurses=6.1=hf484d3e_1002
+  - notebook=5.7.0=py35_0
+  - numba=0.40.0=py35hf8a1672_0
+  - numexpr=2.6.4=py35_1
+  - numpy=1.15.2=py35_blas_openblashd3ea46f_0
+  - openblas=0.2.20=8
+  - openssl=1.0.2r=h7b6447c_0
+  - pandas=0.22.0=py35_1
+  - pandoc=2.7.2=0
+  - pandocfilters=1.4.2=py_1
+  - pango=1.40.14=hf0c64fd_1003
+  - parso=0.4.0=py_0
+  - patsy=0.5.1=py_0
+  - pcre=8.43=he6710b0_0
+  - pexpect=4.6.0=py35_0
+  - pickleshare=0.7.5=py35_0
+  - pip=18.0=py35_1001
+  - pixman=0.34.0=h14c3975_1003
+  - prometheus_client=0.6.0=py_0
+  - prompt_toolkit=2.0.9=py_0
+  - protobuf=3.6.0=py35hf484d3e_0
+  - pthread-stubs=0.4=h14c3975_1001
+  - ptyprocess=0.6.0=py_1001
+  - pydot=1.2.3=py35hf778598_0
+  - pygments=2.4.2=py_0
+  - pygpu=0.7.6=py35h7eb728f_0
+  - pyparsing=2.4.0=py_0
+  - pyqt=5.9.2=py35h05f1152_2
+  - python=3.5.5=h5001a0f_2
+  - python-dateutil=2.8.0=py_0
+  - python-graphviz=0.8.4=py_1003
+  - pytz=2019.1=py_0
+  - pyyaml=3.13=py35h470a237_1
+  - pyzmq=17.1.2=py35hae99301_0
+  - qt=5.9.6=h8703b6f_2
+  - qtconsole=4.5.1=py_0
+  - r-base=3.4.1=h4fe35fd_8
+  - r-colorspace=1.3_2=r341hc070d10_2
+  - r-crayon=1.3.4=r341h6115d3f_1
+  - r-digest=0.6.18=r341hc070d10_0
+  - r-evaluate=0.11=r341h6115d3f_0
+  - r-ggplot2=2.2.1=r341h6115d3f_1
+  - r-glue=1.3.0=r341h470a237_2
+  - r-gtable=0.2.0=r341h6115d3f_1
+  - r-irdisplay=0.6.2=r341_0
+  - r-irkernel=0.8.11=r3.4.1_0
+  - r-jsonlite=1.5=r341hc070d10_2
+  - r-labeling=0.3=r341h6115d3f_1
+  - r-lazyeval=0.2.1=r341hc070d10_2
+  - r-magrittr=1.5=r341h6115d3f_1
+  - r-mass=7.3_50=r341hc070d10_2
+  - r-munsell=0.5.0=r341h6115d3f_1
+  - r-pbdzmq=0.3_2=r3.4.1_0
+  - r-plyr=1.8.4=r341h9d2a408_2
+  - r-r6=2.2.2=r341h6115d3f_1
+  - r-rcolorbrewer=1.1_2=r341h6115d3f_1
+  - r-rcpp=1.0.0=r341h9d2a408_0
+  - r-repr=0.10=r3.4.1_0
+  - r-reshape2=1.4.3=r341h9d2a408_2
+  - r-rlang=0.3.0.1=r341h470a237_0
+  - r-scales=1.0.0=r341h9d2a408_1
+  - r-stringi=1.2.4=r341h9d2a408_1
+  - r-stringr=1.3.1=r341h6115d3f_1
+  - r-tibble=1.3.3=r3.4.1_0
+  - r-uuid=0.1_2=r341hc070d10_1
+  - r-viridislite=0.3.0=r341h6115d3f_1
+  - readline=7.0=hf8c457e_1001
+  - scikit-learn=0.19.1=py35_blas_openblas_201
+  - scipy=1.1.0=py35_blas_openblash7943236_201
+  - seaborn=0.8.1=py_1
+  - send2trash=1.5.0=py_0
+  - setuptools=40.4.3=py35_0
+  - simplegeneric=0.8.1=py_1
+  - sip=4.19.8=py35hf484d3e_1000
+  - six=1.11.0=py35_1
+  - sqlite=3.28.0=h8b20d00_0
+  - statsmodels=0.8.0=py35_0
+  - tensorboard=1.10.0=py35_0
+  - tensorflow=1.10.0=py35_0
+  - termcolor=1.1.0=py_2
+  - terminado=0.8.1=py35_1
+  - testpath=0.4.2=py_1001
+  - theano=1.0.3=py35_0
+  - tk=8.6.9=h84994c4_1001
+  - tornado=5.1.1=py35h470a237_0
+  - traitlets=4.3.2=py35_0
+  - umap-learn=0.3.2=py35_0
+  - wcwidth=0.1.7=py_1
+  - webencodings=0.5.1=py_1
+  - werkzeug=0.15.4=py_0
+  - wheel=0.32.0=py35_1000
+  - widgetsnbextension=2.0.0=py35_0
+  - xorg-kbproto=1.0.7=h14c3975_1002
+  - xorg-libice=1.0.9=h516909a_1004
+  - xorg-libsm=1.2.3=h84519dc_1000
+  - xorg-libx11=1.6.7=h14c3975_1000
+  - xorg-libxau=1.0.9=h14c3975_0
+  - xorg-libxdmcp=1.1.3=h516909a_0
+  - xorg-libxext=1.3.4=h516909a_0
+  - xorg-libxpm=3.5.12=h14c3975_1002
+  - xorg-libxrender=0.9.10=h516909a_1002
+  - xorg-libxt=1.1.5=h14c3975_1002
+  - xorg-renderproto=0.11.1=h14c3975_1002
+  - xorg-xextproto=7.3.0=h14c3975_1002
+  - xorg-xproto=7.0.31=h14c3975_1007
+  - xz=5.2.4=h14c3975_1001
+  - yaml=0.1.7=h14c3975_1001
+  - zeromq=4.2.5=hfc679d8_4
+  - zlib=1.2.11=h14c3975_1004
+  - pip:
+    - keras-tqdm==2.0.1
+    - tqdm==4.32.1
+prefix: /home/alexandra/anaconda3/envs/Pa_interpolate
+

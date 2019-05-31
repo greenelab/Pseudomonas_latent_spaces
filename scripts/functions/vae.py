@@ -8,7 +8,6 @@
 import os
 import argparse
 import pandas as pd
-import matplotlib.pyplot as plt
 import tensorflow as tf
 
 # To ensure reproducibility using Keras during development
