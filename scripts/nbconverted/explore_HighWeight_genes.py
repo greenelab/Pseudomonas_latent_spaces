@@ -28,7 +28,7 @@ seed(randomState)
 
 
 # Load arguments
-analysis_name = "sim_AB_2775_300_v2"
+analysis_name = "sim_balancedAB_2latent"
 data_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "VAE_weight_matrix.txt")
 A_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "geneSetA.txt")
 B_file = os.path.join(os.path.dirname(os.getcwd()), "data", analysis_name, "geneSetB.txt")

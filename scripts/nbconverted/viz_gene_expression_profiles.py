@@ -49,6 +49,19 @@ A_file = os.path.join(
     "geneSetA.txt"
 )
 
+geneSpace_file = os.path.join(
+    base_dir,
+    "viz",
+    analysis_name,
+    "geneSpace_Umap.png"
+)
+latentSpace_file = os.path.join(
+    base_dir,
+    "viz",
+    analysis_name,
+    "latentSpace.png"
+)
+
 
 # In[3]:
 
@@ -144,6 +157,7 @@ for x in geneA_exp_labeled.rep_geneA.sort_values().unique():
 plt.gca().set_aspect('equal', 'datalim')
 plt.title('UMAP projection of gene expression data in GENE space', fontsize=14)
 plt.legend()
+plt.savefig(geneSpace_file, dpi=300)
 
 
 # ## Plot gene expression in VAE encoded latent space
@@ -165,6 +179,7 @@ for x in geneA_exp_labeled.rep_geneA.sort_values().unique():
 plt.gca().set_aspect('equal', 'datalim')
 plt.title('Encoded gene expression data in VAE latent space', fontsize=14)
 plt.legend()
+plt.savefig(latentSpace_file, dpi=300)
 
 
 # In[11]:
