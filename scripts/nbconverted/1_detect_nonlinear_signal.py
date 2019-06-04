@@ -10,8 +10,8 @@
 # **Study design**:
 # 1. Input: Add step function to to Pa gene expression dataset:
 # 2. Approach: Train nonlinear (VAE) and linear (PCA) compression algorithms using this simulated data
-# 3. Evaluation: For each sample in the Pa dataset compare spearman corr(predicted expression, actual expression)
-# 4. Output: Boxplot of the correlation scores per sample 
+# 3. Evaluation: For each sample in the Pa dataset compare spearman corr(predicted expression, actual expression).  So each sample will have a correlation score and then the entire dataset will have a distribution of correlation scores from one simulation.
+# 4. Output: Boxplot of the correlation scores per simulation run 
 
 # In[1]:
 
